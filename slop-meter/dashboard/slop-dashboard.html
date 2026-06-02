@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Slop Dashboard</title>
+  <style>
+    :root {
+      --bg: #fbfaf7; --surface: #f4f2ec; --border: #d4cfc4; --border-sub: #e8e4da;
+      --text: #1a1814; --muted: #8a8078; --accent: #8b2e23;
+      --human: #2d8a5c; --mid: #b8862a; --slop: #b23a2a;
+      --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #0f0f0f; --surface: #161616; --border: #2a2a2a; --border-sub: #1e1e1e;
+        --text: #f0ede8; --muted: #777; --accent: #c8a96e; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.5;
+      padding: 2rem clamp(1rem, 4vw, 3rem); max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 1.6rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .gate, .stats, .controls, table { width: 100%; }
+    .gate { background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 1.5rem; max-width: 460px; margin: 2rem auto; }
+    .gate label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); margin: 0.75rem 0 0.3rem; }
+    .gate input { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--border);
+      border-radius: 6px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.95rem; }
+    button { font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      padding: 0.55rem 1.1rem; border-radius: 6px; border: 1px solid var(--accent);
+      background: var(--accent); color: #fff; margin-top: 1rem; }
+    button.ghost { background: transparent; color: var(--text); border-color: var(--border); margin: 0; }
+    .err { color: var(--slop); font-size: 0.85rem; margin-top: 0.75rem; min-height: 1.2rem; }
+    .stats { display: flex; gap: 1px; background: var(--border-sub); border: 1px solid var(--border-sub);
+      border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; }
+    .stat { background: var(--bg); flex: 1; padding: 1rem 1.25rem; }
+    .stat .n { font-size: 1.5rem; font-weight: 700; }
+    .stat .l { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .controls { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+    .controls .spacer { flex: 1; }
+    .controls small { color: var(--muted); }
+    .sortbtn { background: transparent; color: var(--muted); border: 1px solid var(--border);
+      font-weight: 500; margin: 0; padding: 0.35rem 0.8rem; font-size: 0.78rem; }
+    .sortbtn.active { color: var(--accent); border-color: var(--accent); }
+    table { border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border-sub); }
+    th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    tr.flag td { background: rgba(178, 58, 42, 0.06); }
+    .post a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); }
+    .post a:hover { color: var(--accent); }
+    .score { font-weight: 700; }
+    .bar { display: inline-block; height: 7px; border-radius: 4px; vertical-align: middle; margin-left: 0.5rem; min-width: 2px; }
+    .warn { color: var(--slop); font-weight: 700; }
+    .hide { display: none; }
+    .foot { color: var(--muted); font-size: 0.78rem; margin-top: 1.5rem; }
+    .foot a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <h1>Slop Dashboard 🤖</h1>
+  <p class="sub">Reader "is this AI slop?" ratings, per post. Owner-only.</p>
+
+  <div id="gate" class="gate hide">
+    <strong>Connect</strong>
+    <label for="ep">API endpoint</label>
+    <input id="ep" type="text" value="https://slop.intercate.net" autocomplete="off" />
+    <label for="tk">Admin token</label>
+    <input id="tk" type="password" placeholder="your ADMIN_TOKEN" autocomplete="off" />
+    <button id="connect">Load dashboard</button>
+    <button id="forget" class="ghost hide">Sign out</button>
+    <div id="err" class="err"></div>
+  </div>
+
+  <div id="app" class="hide">
+    <div class="stats">
+      <div class="stat"><div class="n" id="s-posts">–</div><div class="l">Posts rated</div></div>
+      <div class="stat"><div class="n" id="s-votes">–</div><div class="l">Total votes</div></div>
+      <div class="stat"><div class="n" id="s-avg">–</div><div class="l">Overall avg</div></div>
+      <div class="stat"><div class="n" id="s-flag">–</div><div class="l">Flagged sloppy</div></div>
+    </div>
+    <div class="controls">
+      <small>Sort:</small>
+      <button class="sortbtn" data-sort="average">Slop score</button>
+      <button class="sortbtn active" data-sort="count">Votes</button>
+      <button class="sortbtn" data-sort="last_at">Recent</button>
+      <span class="spacer"></span>
+      <button class="sortbtn" id="refresh">↻ Refresh</button>
+      <button class="sortbtn" id="signout">Sign out</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Post</th>
+          <th class="num">Votes</th>
+          <th class="num">Avg slop</th>
+          <th class="num">Range</th>
+          <th class="num">Last vote</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="foot">
+      Avg is 0 (human craft) → 100 (pure slop). ⚠ flags posts averaging ≥ 60 with ≥ 3 votes.
+      Data: <span id="endpoint-label"></span>
+    </p>
+  </div>
+
+  <script>
+    const SITE = 'https://intercate.net';
+    const FLAG_AVG = 60, FLAG_MIN_VOTES = 3;
+    const RANGES = [
+      [15,'✍️'],[30,'🙂'],[45,'😌'],[60,'😐'],[75,'🤨'],[90,'🤖'],[101,'🛸']
+    ];
+    const emoji = (s) => (RANGES.find(r => s < r[0]) || RANGES[RANGES.length-1])[1];
+    const colorFor = (s) => s == null ? 'var(--muted)'
+      : s < 35 ? 'var(--human)' : s < 60 ? 'var(--mid)' : 'var(--slop)';
+
+    const $ = (id) => document.getElementById(id);
+    let DATA = [], sortKey = 'count';
+
+    function fmtDate(ms) {
+      if (!ms) return '–';
+      const d = new Date(Number(ms));
+      return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: '2-digit' });
+    }
+
+    function render() {
+      const posts = [...DATA].sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0));
+      const totalVotes = posts.reduce((n, p) => n + p.count, 0);
+      const weighted = posts.reduce((n, p) => n + p.average * p.count, 0);
+      const flagged = posts.filter(p => p.average >= FLAG_AVG && p.count >= FLAG_MIN_VOTES);
+
+      $('s-posts').textContent = posts.length;
+      $('s-votes').textContent = totalVotes;
+      $('s-avg').textContent = totalVotes ? Math.round(weighted / totalVotes) + ' ' + emoji(Math.round(weighted/totalVotes)) : '–';
+      $('s-flag').textContent = flagged.length;
+
+      $('rows').innerHTML = posts.map(p => {
+        const flag = p.average >= FLAG_AVG && p.count >= FLAG_MIN_VOTES;
+        const url = p.post_id.startsWith('/') ? SITE + p.post_id : p.post_id;
+        return `<tr class="${flag ? 'flag' : ''}">
+          <td class="post"><a href="${url}" target="_blank" rel="noopener">${p.post_id}</a></td>
+          <td class="num">${p.count}</td>
+          <td class="num"><span class="score" style="color:${colorFor(p.average)}">${p.average} ${emoji(p.average)}</span>
+            <span class="bar" style="width:${Math.max(2, p.average/2)}px;background:${colorFor(p.average)}"></span></td>
+          <td class="num">${p.min}–${p.max}</td>
+          <td class="num">${fmtDate(p.last_at)}</td>
+          <td>${flag ? '<span class="warn">⚠</span>' : ''}</td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="6" style="color:var(--muted)">No votes yet.</td></tr>';
+    }
+
+    async function load() {
+      const ep = (localStorage.getItem('slop-ep') || '').replace(/\/+$/, '');
+      const tk = localStorage.getItem('slop-token') || '';
+      if (!ep || !tk) return showGate();
+      $('err').textContent = '';
+      try {
+        const res = await fetch(ep + '/summary', { headers: { Authorization: 'Bearer ' + tk } });
+        if (res.status === 401) { showGate('Invalid token.'); return; }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        DATA = json.posts || [];
+        $('endpoint-label').textContent = ep;
+        $('gate').classList.add('hide');
+        $('app').classList.remove('hide');
+        render();
+      } catch (e) {
+        showGate('Could not load: ' + e.message);
+      }
+    }
+
+    function showGate(msg) {
+      $('app').classList.add('hide');
+      $('gate').classList.remove('hide');
+      if (localStorage.getItem('slop-ep')) $('ep').value = localStorage.getItem('slop-ep');
+      $('err').textContent = msg || '';
+    }
+    function signout() {
+      localStorage.removeItem('slop-token');
+      showGate('Signed out.');
+    }
+
+    $('connect').addEventListener('click', () => {
+      localStorage.setItem('slop-ep', $('ep').value.trim());
+      localStorage.setItem('slop-token', $('tk').value.trim());
+      load();
+    });
+    $('signout').addEventListener('click', signout);
+    $('refresh').addEventListener('click', load);
+    document.querySelectorAll('.sortbtn[data-sort]').forEach(b => {
+      b.addEventListener('click', () => {
+        sortKey = b.dataset.sort;
+        document.querySelectorAll('.sortbtn[data-sort]').forEach(x => x.classList.toggle('active', x === b));
+        render();
+      });
+    });
+
+    load();
+  </script>
+</body>
+</html>

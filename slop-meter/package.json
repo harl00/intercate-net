@@ -1,0 +1,15 @@
+{
+  "name": "slop-meter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Anonymous 'is this AI slop?' rating: a Cloudflare Worker API + embeddable web component.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute slop-meter --remote --file=schema.sql",
+    "db:init:local": "wrangler d1 execute slop-meter --local --file=schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^4.95.0"
+  }
+}

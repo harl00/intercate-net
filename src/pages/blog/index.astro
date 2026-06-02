@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const tagLabels: Record<string, string> = {
+  'ai-government': 'AI & Government',
+  'university': 'University',
+  'technology': 'Technology',
+  'essay': 'Essay',
+};
+
+const allTags = Object.keys(tagLabels);
+---
+
+<Base title="Writing — intercate.net" description="Essays, analysis, and university work on AI governance, digital policy, and technology in government.">
+  <div class="container">
+    <header class="page-header animate-in">
+      <span class="section-label">Writing</span>
+      <h1>All posts</h1>
+      <p class="page-desc">
+        Essays, analysis, university assignments, and technical notes across AI governance,
+        digital policy, and public sector technology.
+      </p>
+    </header>
+
+    <!-- Tag filter — JS-powered client-side filter -->
+    <div class="filter-bar animate-in delay-1" id="filter-bar">
+      <button class="filter-btn active" data-tag="all">All</button>
+      {allTags.map(tag => (
+        <button class="filter-btn" data-tag={tag}>{tagLabels[tag]}</button>
+      ))}
+    </div>
+
+    <div class="posts-list" id="posts-list">
+      {posts.map((post) => (
+        <article class="post-card" data-tags={post.data.tags.join(',')}>
+          <div class="post-card-meta">
+            {post.data.tags.map(tag => (
+              <span class={`tag tag-${tag}`}>{tagLabels[tag] || tag}</span>
+            ))}
+            <time datetime={post.data.pubDate.toISOString()} class="post-card-date">
+              {post.data.pubDate.toLocaleDateString('en-AU', { year: 'numeric', month: 'short', day: 'numeric' })}
+            </time>
+          </div>
+          <h2><a href={`/blog/${post.id}`}>{post.data.title}</a></h2>
+          <p class="post-card-desc">{post.data.description}</p>
+          <a href={`/blog/${post.id}`} class="read-more">Read more →</a>
+        </article>
+      ))}
+    </div>
+  </div>
+</Base>
+
+<script>
+  const filterBar = document.getElementById('filter-bar');
+  const postsList = document.getElementById('posts-list');
+
+  // Check URL param on load
+  const urlTag = new URLSearchParams(window.location.search).get('tag');
+  if (urlTag) applyFilter(urlTag);
+
+  filterBar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-tag]') as HTMLButtonElement;
+    if (!btn) return;
+    applyFilter(btn.dataset.tag || 'all');
+  });
+
+  function applyFilter(tag: string) {
+    // Update buttons
+    filterBar?.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', (b as HTMLButtonElement).dataset.tag === tag);
+    });
+
+    // Show/hide posts
+    postsList?.querySelectorAll('.post-card').forEach(card => {
+      const el = card as HTMLElement;
+      const tags = el.dataset.tags?.split(',') || [];
+      const show = tag === 'all' || tags.includes(tag);
+      el.style.display = show ? '' : 'none';
+    });
+  }
+</script>
+
+<style>
+.page-header {
+  padding: 4rem 0 2rem;
+}
+
+.page-header h1 {
+  margin: 0.75rem 0 0.75rem;
+}
+
+.page-desc {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 54ch;
+  line-height: 1.6;
+}
+</style>

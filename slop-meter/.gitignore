@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+
+# wrangler / cloudflare local state
+.wrangler/
+dist/
+
+# local secrets for `wrangler dev` (never commit)
+.dev.vars
+
+# logs / os
+*.log
+.DS_Store

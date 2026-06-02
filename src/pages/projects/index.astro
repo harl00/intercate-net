@@ -1,0 +1,132 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const allProjects = await getCollection('projects', ({ data }) => !data.draft);
+
+const sorted = allProjects.sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  const statusOrder = { active: 0, paused: 1, complete: 2 };
+  if (statusOrder[a.data.status] !== statusOrder[b.data.status])
+    return statusOrder[a.data.status] - statusOrder[b.data.status];
+  return (b.data.updatedDate ?? b.data.pubDate).valueOf() -
+         (a.data.updatedDate ?? a.data.pubDate).valueOf();
+});
+
+const statusLabel = { active: 'Active', paused: 'Paused', complete: 'Complete' };
+---
+
+<Base
+  title="Projects — Andrew Morrison"
+  description="Ongoing and completed projects spanning AI governance, university research, advisory work, and personal experiments."
+>
+  <div class="container animate-in">
+    <header class="page-header">
+      <span class="section-label">Projects</span>
+      <h1>Work in progress</h1>
+      <p class="page-desc">
+        Living documents — experiments, university work, advisory projects, and ideas being tested.
+        Each collects related writing and resources in one place.
+      </p>
+      <div class="divider"></div>
+    </header>
+
+    <div class="projects-list">
+      {sorted.map(project => (
+        <a href={`/projects/${project.id}`} class="project-card">
+          <div class="project-card-header">
+            <span class={`project-status ${project.data.status}`}>
+              {statusLabel[project.data.status]}
+            </span>
+            {project.data.tags.map(tag => (
+              <span class={`tag tag-${tag}`}>{tag.replace('-', ' ')}</span>
+            ))}
+          </div>
+          <h2>{project.data.title}</h2>
+          <p>{project.data.description}</p>
+          <span class="project-updated">
+            Updated {(project.data.updatedDate ?? project.data.pubDate).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>
+
+<style>
+.page-header { padding: 4rem 0 2rem; }
+.page-header h1 { margin: 0.75rem 0 0.75rem; }
+.page-desc { color: var(--text-secondary); font-size: 1rem; max-width: 54ch; line-height: 1.6; }
+
+.projects-list {
+  display: grid;
+  gap: 1px;
+  background: var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  margin-bottom: 6rem;
+  overflow: hidden;
+}
+
+.project-card {
+  background: var(--bg);
+  padding: 2rem;
+  display: grid;
+  gap: 0.6rem;
+  text-decoration: none;
+  transition: background var(--transition);
+}
+.project-card:hover { background: var(--bg-surface); }
+
+.project-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.project-card h2 {
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.project-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 60ch;
+  margin: 0;
+}
+
+.project-updated {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.project-status {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2em 0.6em;
+  border-radius: 2px;
+}
+.project-status.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+.project-status.paused {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.project-status.complete {
+  background: rgba(74, 124, 111, 0.15);
+  color: #4a7c6f;
+  border: 1px solid rgba(74, 124, 111, 0.3);
+}
+</style>

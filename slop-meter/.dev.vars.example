@@ -1,0 +1,8 @@
+# Local secrets for `wrangler dev`. Copy to `.dev.vars` (which is gitignored).
+# In production these are set with `wrangler secret put <NAME>`.
+
+# Salt used to hash IPs for dedup (any long random string).
+SALT="change-me-to-a-long-random-string"
+
+# Bearer token gating GET /summary (the owner-only dashboard/MCP feed).
+ADMIN_TOKEN="change-me-to-a-different-long-random-string"

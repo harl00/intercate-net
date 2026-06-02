@@ -1,0 +1,25 @@
+name = "slop-meter"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+# Run `wrangler d1 create slop-meter` and paste the returned database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "slop-meter"
+database_id = "ad5a317b-3e71-4236-b264-b5be9bf75fe4"
+
+# Serve the API from your own domain (intercate.net must be a zone on this
+# Cloudflare account). Wrangler creates the DNS record + cert on deploy.
+[[routes]]
+pattern = "slop.intercate.net"
+custom_domain = true
+
+# SALT is a secret, set with: wrangler secret put SALT
+# (any long random string — used to hash IPs so they're never stored raw)
+#
+# ADMIN_TOKEN is a secret, set with: wrangler secret put ADMIN_TOKEN
+# (gates GET /summary — the owner-only "all posts + ratings" feed for dashboards/MCP)
+
+# Lock the API to your site(s). Comma-separated origins, or "*" for any.
+[vars]
+ALLOWED_ORIGINS = "https://intercate.net,https://www.intercate.net"

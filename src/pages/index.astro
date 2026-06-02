@@ -1,0 +1,183 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const recentPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+
+const allProjects = await getCollection('projects', ({ data }) => !data.draft);
+const statusOrder = { active: 0, paused: 1, complete: 2 };
+const recentProjects = allProjects
+  .sort((a, b) => {
+    if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+    if (statusOrder[a.data.status] !== statusOrder[b.data.status])
+      return statusOrder[a.data.status] - statusOrder[b.data.status];
+    return (b.data.updatedDate ?? b.data.pubDate).valueOf() -
+           (a.data.updatedDate ?? a.data.pubDate).valueOf();
+  })
+  .slice(0, 3);
+
+const statusLabel = { active: 'Active', paused: 'Paused', complete: 'Complete' };
+
+const tagLabels: Record<string, string> = {
+  'ai-government': 'AI & Government',
+  'university': 'University',
+  'technology': 'Technology',
+  'essay': 'Essay',
+};
+---
+
+<Base title="Andrew Morrison — intercate.net" description="Writing on AI governance, digital policy, and technology projects of interest">
+  <section class="hero container animate-in">
+    <div class="hero-inner">
+      <span class="section-label delay-1 animate-in">intercate.net</span>
+      <h1 class="delay-2 animate-in">Andrew Morrison</h1>
+      <p class="hero-roles delay-3 animate-in">
+        AI Governance &nbsp;&middot;&nbsp;
+        University Lecturer &nbsp;&middot;&nbsp;
+        RFDS AI Advisory
+      </p>
+      <p class="hero-desc delay-4 animate-in">
+        Writing on the intersection of artificial intelligence, government service delivery,
+        digital policy, and what it means to build technology in the public interest.
+      </p>
+      <div class="hero-actions delay-4 animate-in">
+        <a href="/blog" class="btn-primary">Read the writing</a>
+        <a href="/about" class="btn-ghost">About me</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="streams container">
+    <span class="section-label">What I write about</span>
+    <div class="streams-grid">
+      <a href="/blog?tag=ai-government" class="stream-card">
+        <div class="stream-icon">⚙</div>
+        <h3>AI &amp; Government</h3>
+        <p>Public sector AI strategy, agentic systems in public service, and the policy frameworks that make it safe.</p>
+      </a>
+      <a href="/blog?tag=university" class="stream-card">
+        <div class="stream-icon">◈</div>
+        <h3>University</h3>
+        <p>Coursework, assignments, and reflections from postgraduate study in technology management and AI.</p>
+      </a>
+      <a href="/blog?tag=technology" class="stream-card">
+        <div class="stream-icon">◻</div>
+        <h3>Technology</h3>
+        <p>Technical work, open source, self-hosted infrastructure, and the craft of building things.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="projects-home container">
+    <div class="recent-header">
+      <span class="section-label">Selected projects</span>
+      <a href="/projects" class="see-all">All projects →</a>
+    </div>
+    <div class="home-projects-grid">
+      {recentProjects.map((project) => (
+        <a href={`/projects/${project.id}`} class="home-project-card">
+          <div class="hp-header">
+            <span class={`project-status ${project.data.status}`}>
+              {statusLabel[project.data.status]}
+            </span>
+            {project.data.tags.slice(0, 2).map(tag => (
+              <span class={`tag tag-${tag}`}>{tag.replace('-', ' ')}</span>
+            ))}
+          </div>
+          <h3>{project.data.title}</h3>
+          <p>{project.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="recent container">
+    <div class="recent-header">
+      <span class="section-label">Recent writing</span>
+      <a href="/blog" class="see-all">All posts →</a>
+    </div>
+    <div class="posts-list">
+      {recentPosts.map((post) => (
+        <article class="post-card">
+          <div class="post-card-meta">
+            {post.data.tags.map(tag => (
+              <span class={`tag tag-${tag}`}>{tagLabels[tag] || tag}</span>
+            ))}
+            <time datetime={post.data.pubDate.toISOString()} class="post-card-date">
+              {post.data.pubDate.toLocaleDateString('en-AU', { year: 'numeric', month: 'short', day: 'numeric' })}
+            </time>
+          </div>
+          <h2><a href={`/blog/${post.id}`}>{post.data.title}</a></h2>
+          <p class="post-card-desc">{post.data.description}</p>
+          <a href={`/blog/${post.id}`} class="read-more">Read more →</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+.hero { padding: 6rem 0 4rem; border-bottom: 1px solid var(--border-subtle); }
+.hero-inner { max-width: 680px; }
+.hero h1 { margin: 0.75rem 0 1rem; }
+.hero-roles { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.02em; margin-bottom: 1.25rem; line-height: 1.8; }
+.hero-desc { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; max-width: 56ch; margin-bottom: 2rem; }
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary { display: inline-block; background: var(--accent); color: var(--bg); font-size: 0.88rem; font-weight: 500; padding: 0.65rem 1.4rem; border-radius: var(--radius); letter-spacing: 0.02em; transition: background var(--transition), transform var(--transition); }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); color: var(--bg); }
+.btn-ghost { display: inline-block; border: 1px solid var(--border); color: var(--text-secondary); font-size: 0.88rem; padding: 0.65rem 1.4rem; border-radius: var(--radius); transition: border-color var(--transition), color var(--transition); }
+.btn-ghost:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.streams { padding: 4rem 0; border-bottom: 1px solid var(--border-subtle); }
+.streams .section-label { display: block; margin-bottom: 1.5rem; }
+.streams-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius); overflow: hidden; }
+.stream-card { background: var(--bg); padding: 1.75rem; display: block; transition: background var(--transition); text-decoration: none; }
+.stream-card:hover { background: var(--bg-surface); }
+.stream-icon { font-size: 1.4rem; margin-bottom: 0.75rem; color: var(--accent); opacity: 0.7; }
+.stream-card h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+.stream-card p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+.recent { padding: 4rem 0; }
+.recent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.see-all { font-size: 0.82rem; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.see-all:hover { color: var(--accent); }
+
+/* ── Selected projects ── */
+.projects-home { padding: 4rem 0; border-bottom: 1px solid var(--border-subtle); }
+.home-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+.home-project-card {
+  background: var(--bg);
+  padding: 1.75rem;
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+  text-decoration: none;
+  transition: background var(--transition);
+}
+.home-project-card:hover { background: var(--bg-surface); }
+.hp-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.home-project-card h3 { font-size: 1.1rem; color: var(--text-primary); line-height: 1.25; margin: 0; }
+.home-project-card p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+
+.project-status {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2em 0.6em;
+  border-radius: 2px;
+}
+.project-status.active { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+.project-status.paused { background: var(--bg-elevated); color: var(--text-muted); border: 1px solid var(--border); }
+.project-status.complete { background: rgba(74, 124, 111, 0.15); color: #4a7c6f; border: 1px solid rgba(74, 124, 111, 0.3); }
+</style>

@@ -1,0 +1,117 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="About — Andrew Morrison"
+  description="Technology Adviser. AI governance, digital policy, and university lecturer."
+>
+  <div class="content-container animate-in">
+    <header class="page-header">
+      <span class="section-label">About</span>
+      <h1>Andrew Morrison</h1>
+      <div class="divider"></div>
+    </header>
+
+    <div class="prose about-prose">
+
+      <p>
+        My current work sits at the intersection of practical AI deployment and public accountability —
+        how do you build agentic systems that actually work for citizens, at scale, within the
+        constraints of government? That question drives most of what I think about.
+      </p>
+
+      <h2>Advisory and Interest Roles</h2>
+
+      <ul>
+        <li>
+          <strong>Adjunct Associate Professor</strong> — Teaching AI in healthcare and enterprise AI
+          topics at postgraduate level (Charles Darwin University), with a focus on human-centred design and responsible
+          AI systems.
+        </li>
+      </ul>
+
+      <h2>Background</h2>
+
+      <p>
+        My career spans Queensland and federal government digital transformation. I have a
+        long-standing interest in open-source tooling, self-hosted infrastructure, and the
+        practical craft of building things.
+      </p>
+
+      <p>
+        I'm pursuing an Executive Master of Technology Management at UTS, with coursework
+        spanning AI for enterprises, cybersecurity analytics, and technology leadership.
+      </p>
+
+      <h2>This site</h2>
+
+      <p>
+        This is where I write about things I can share: AI governance thinking, university
+        assignments and reflections, and technical topics I'm
+        exploring. It's built with Astro and hosted on GitHub Pages.
+      </p>
+
+      <p>
+        I write in the open because the ideas get better when you have to explain them clearly,
+        and because the public sector needs more practitioners sharing what they've learned.
+      </p>
+
+      <h2>Disclaimer</h2>
+
+      <p>
+        The views expressed on this website are solely those of the author in a personal
+        capacity and do not represent the views or positions of any current or former employer,
+        affiliated organisation, or professional body. This site is maintained independently for
+        the purposes of personal reflection, idea development, and the sharing of lived
+        experience. You can read the full statement on the <a href="/disclaimer">disclaimer page</a>.
+      </p>
+
+      <div class="connect">
+        <h2>Connect</h2>
+        <p>The best place to find me is LinkedIn.</p>
+        <a
+          href="https://www.linkedin.com/in/andrewnmorrison/"
+          target="_blank"
+          rel="noopener"
+          class="linkedin-share"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          Connect on LinkedIn
+        </a>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+.page-header { padding: 4rem 0 1rem; }
+.page-header h1 { margin: 0.75rem 0; }
+
+.about-prose { padding-bottom: 6rem; }
+
+.about-prose ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 1.5rem;
+}
+
+.about-prose ul li {
+  padding: 1rem 1.25rem;
+  border-left: 2px solid var(--accent);
+  background: var(--bg-surface);
+  margin-bottom: 0.75rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.about-prose ul li strong { color: var(--text-primary); }
+
+.connect { margin-top: 3rem; }
+.connect h2 { margin-bottom: 0.75rem; }
+.connect p { margin-bottom: 1rem; }
+</style>

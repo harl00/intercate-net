@@ -1,0 +1,190 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Work — Andrew Morrison"
+  description="Current and past work across Australian government digital transformation, AI governance, and advisory roles."
+>
+  <div class="container animate-in">
+    <header class="page-header">
+      <span class="section-label">Work</span>
+      <h1>What I do</h1>
+      <p class="page-desc">
+        An overview of current roles and selected past work I can discuss publicly.
+      </p>
+      <div class="divider"></div>
+    </header>
+
+    <div class="work-sections">
+
+      <section class="work-section">
+        <h2>Government</h2>
+        <div class="work-cards">
+          <div class="work-card current">
+            <div class="work-card-header">
+              <span class="work-status current">Current</span>
+              <span class="work-org">Digital Transformation Agency</span>
+            </div>
+            <h3>Chief Technology (Data &amp; AI) Officer</h3>
+            <p>
+              Leading the platforms that support digital.gov.au, architecture.digital.gov.au,
+              and other whole-of-government digital capability. I support and help teams
+              responsible for whole-of-government capability in the domains of Policy,
+              Architecture, AI, and anything Digital — across Data, Engineering, Product, and Web.
+            </p>
+          </div>
+          <div class="work-card">
+            <div class="work-card-header">
+              <span class="work-status past">Past</span>
+              <span class="work-org">Dept. of Communities, Housing and Digital Economy (Qld)</span>
+            </div>
+            <h3>Chief Digital Officer</h3>
+            <p>
+              Established and led a new business unit driving strategic digital transformation
+              across a large federated department. Transformed enterprise architecture and
+              strategic engagement into an internal consultancy capability, and embedded
+              human-centred design and Design Thinking into service planning.
+            </p>
+            <p>
+              Delivered critical services at pace across multiple crises — including Queensland's
+              pandemic response and disaster hardship payment systems during the 2022 SEQ floods,
+              processing over 15,000 emergency grant applications in the first two weeks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="work-section">
+        <h2>Advisory</h2>
+        <div class="work-cards">
+          <div class="work-card current">
+            <div class="work-card-header">
+              <span class="work-status current">Current</span>
+              <span class="work-org">Royal Flying Doctor Service</span>
+            </div>
+            <h3>AI Advisory Group — Technical Advisor</h3>
+            <p>
+              Technical advisor to the RFDS AI Advisory Group, supporting the development of
+              AI-enhanced care for rural and remote Australia. The initiative is exploring
+              AI tools for remote patient monitoring and clinical documentation in challenging
+              field environments — including video-based vital sign assessment and speech-to-text
+              in aircraft cabins — with a strong emphasis on clinical safety and ethical deployment.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="work-section">
+        <h2>Academic</h2>
+        <div class="work-cards">
+          <div class="work-card current">
+            <div class="work-card-header">
+              <span class="work-status current">Current</span>
+              <span class="work-org">Charles Darwin University</span>
+            </div>
+            <h3>Adjunct Associate Professor</h3>
+            <p>
+              Teaching AI in healthcare and enterprise AI topics at postgraduate level, with a
+              focus on human-centred design and responsible AI systems.
+            </p>
+          </div>
+          <div class="work-card current">
+            <div class="work-card-header">
+              <span class="work-status current">Current</span>
+              <span class="work-org">UTS</span>
+            </div>
+            <h3>Executive Master of Technology Management</h3>
+            <p>
+              Postgraduate study spanning AI for enterprises, cybersecurity analytics, and technology
+              leadership. Coursework and assignments are shared on this site where appropriate.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</Base>
+
+<style>
+.page-header { padding: 4rem 0 2rem; }
+.page-header h1 { margin: 0.75rem 0 0.75rem; }
+.page-desc { color: var(--text-secondary); font-size: 1rem; max-width: 54ch; line-height: 1.6; }
+
+.work-sections { padding-bottom: 6rem; }
+
+.work-section {
+  padding: 3rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.work-section:last-child { border-bottom: none; }
+
+.work-section > h2 {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  margin-bottom: 1.5rem;
+}
+
+.work-cards { display: grid; gap: 1rem; }
+
+.work-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+}
+
+.work-card.current { border-left: 2px solid var(--accent); }
+
+.work-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.work-status {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2em 0.6em;
+  border-radius: 2px;
+}
+
+.work-status.current {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+
+.work-status.past {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.work-org {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.work-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.work-card p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
+}
+.work-card p:last-child { margin-bottom: 0; }
+</style>
