@@ -30,7 +30,7 @@ Government systems have properties that make them particularly interesting targe
 - **High value outcomes**: visa decisions, welfare eligibility, and border control have consequences that motivate sophisticated attackers
 - **Transparency requirements**: published fairness audits and bias reports can inadvertently reveal information that helps attackers craft evasion inputs
 - **Update cadence**: assurance and procurement processes mean model update cycles need to be planned deliberately against a fast-moving threat landscape
-- **Maturing red-team practice**: adversarial testing of AI systems is still an emerging discipline across the sector — in industry and government alike
+- **Maturing red-team practice**: adversarial testing of AI systems is still an emerging discipline across the sector, in industry and government alike
 
 ## What adequate defence looks like
 
