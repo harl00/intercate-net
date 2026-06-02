@@ -84,6 +84,8 @@
 
       this.postId = this.getAttribute('post-id') || location.pathname;
       this.endpoint = (this.getAttribute('endpoint') || '').replace(/\/+$/, '');
+      this.version = this.getAttribute('content-version') || null;
+      this.source = this.getAttribute('content-source') || null;
       this.storeKey = 'slop-meter:' + this.postId;
 
       const root = this.attachShadow({ mode: 'open' });
@@ -142,10 +144,13 @@
       btn.disabled = true;
       btn.textContent = 'Sending…';
       try {
+        const payload = { id: this.postId, score };
+        if (this.version) payload.version = this.version;
+        if (this.source) payload.source = this.source;
         const res = await fetch(this.endpoint + '/vote', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ id: this.postId, score }),
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error('bad response');
         const data = await res.json();

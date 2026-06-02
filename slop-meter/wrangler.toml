@@ -23,3 +23,12 @@ custom_domain = true
 # Lock the API to your site(s). Comma-separated origins, or "*" for any.
 [vars]
 ALLOWED_ORIGINS = "https://intercate.net,https://www.intercate.net"
+
+# Snapshot strategy for content versioning:
+#   d1  (default) fetch the source, verify its hash, store the text in D1
+#   ref           store only the source URL (e.g. a git-pinned raw URL)
+#   off           record the version on votes but capture no snapshot
+SNAPSHOT_MODE = "d1"
+# Origins the worker may fetch snapshot sources from (SSRF guard).
+# Defaults to ALLOWED_ORIGINS when unset; "*" disables snapshot fetching.
+# SNAPSHOT_SOURCE_ORIGINS = "https://intercate.net"

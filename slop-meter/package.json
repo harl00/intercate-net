@@ -7,7 +7,8 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "db:init": "wrangler d1 execute slop-meter --remote --file=schema.sql",
-    "db:init:local": "wrangler d1 execute slop-meter --local --file=schema.sql"
+    "db:init:local": "wrangler d1 execute slop-meter --local --file=schema.sql",
+    "db:migrate": "wrangler d1 execute slop-meter --remote --file=migrations/0001_versioning.sql"
   },
   "devDependencies": {
     "wrangler": "^4.95.0"

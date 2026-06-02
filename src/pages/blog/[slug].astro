@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { createHash } from 'node:crypto';
 import Post from '../../layouts/Post.astro';
 
 export async function getStaticPaths() {
@@ -12,6 +13,12 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+
+// Content version = hash of the raw markdown body. Only changes when the words
+// change. The worker re-hashes /blog/<slug>.md and must agree, so the .md
+// endpoint serves exactly this `post.body`. Keep the slice length in sync.
+const contentVersion = createHash('sha256').update(post.body).digest('hex').slice(0, 16);
+const contentSource = new URL(`/blog/${post.id}.md`, Astro.site).href;
 ---
 
 <Post
@@ -22,6 +29,8 @@ const { Content } = await render(post);
   tags={post.data.tags}
   ogImage={post.data.ogImage}
   linkedinSnippet={post.data.linkedinSnippet}
+  contentVersion={contentVersion}
+  contentSource={contentSource}
 >
   <Content />
 </Post>

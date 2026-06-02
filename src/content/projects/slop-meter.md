@@ -33,4 +33,8 @@ Two decoupled, reusable parts plus an owner dashboard:
 
 ## Where it's heading
 
-The data model keeps a timestamp on every vote, so slop perception is queryable over time, not just as a running tally. The next step I'm interested in is exposing that read-only data to an AI assistant — via MCP — so I can ask for insights and get a live, generated dashboard back rather than reading a table.
+Each vote is now bound to a **version of the content** it rated — a hash of the post's markdown, captured as a one-per-version snapshot — so as I revise a post I can see how the slop rating moves, and pair each rating with the exact text that earned it. That's the beginning of a feedback loop: use what reads as slop to write better.
+
+Building that surfaced a clean per-post markdown endpoint, which turned out to be the seed of a separate experiment — [making this site agent-readable](/projects/agent-readable-site).
+
+The next step I'm interested in is exposing the read-only ratings data to an AI assistant — via MCP — so I can ask for insights and get a live, generated dashboard back rather than reading a table.

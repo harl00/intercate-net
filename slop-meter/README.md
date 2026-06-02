@@ -19,11 +19,31 @@ For the full story of how this was built — decisions, gotchas, roadmap — see
 |--------|----------------------|---------------------|----------------------------------------------------|
 | POST   | `/vote`              | none                | `{ ok, you, count, average, histogram }`           |
 | GET    | `/stats?id=<id>`     | none                | `{ id, count, average, histogram }`                |
-| GET    | `/summary`           | Bearer `ADMIN_TOKEN`| `{ posts: [{ post_id, count, average, min, max, last_at }] }` |
+| GET    | `/summary`           | Bearer `ADMIN_TOKEN`| `{ posts: [{ post_id, count, average, min, max, last_at, versions }] }` |
+| GET    | `/versions?id=<id>`  | Bearer `ADMIN_TOKEN`| per-version breakdown (`&text=1` to include snapshots) |
 | GET    | `/`                  | none                | health check                                       |
 
 `id` is any opaque string (≤128 chars), so one deployment serves many sites.
 `score` is 0 (human craft) … 100 (pure slop).
+
+### Content versioning
+
+`POST /vote` optionally takes `version` (a hash of the rated content) and `source`
+(a URL the content can be fetched from). The first time a new version is seen, the
+worker captures **one snapshot per `(post, version)`** — never per vote — so ratings
+stay tied to the exact content that earned them as a post evolves. Controlled by
+`SNAPSHOT_MODE`:
+
+- **`d1`** (default) — fetch `source`, verify it hashes to `version`, store the text in D1. Git-independent: you can rewrite/scrub source history and the dataset survives.
+- **`ref`** — store only the `source` URL (e.g. a commit-pinned raw URL); reconstruct text on demand. Elegant if you keep history.
+- **`off`** — record the version on votes, capture nothing.
+
+Snapshot fetches are restricted to `SNAPSHOT_SOURCE_ORIGINS` (defaults to
+`ALLOWED_ORIGINS`; `"*"` disables fetching) as an SSRF guard.
+
+On the embed side, pass `content-version` and `content-source` attributes on the
+`<slop-meter>` element; the host site computes the version from its source (for an
+Astro site, hash the markdown body and serve it at `/blog/<slug>.md`).
 
 ## Deploy the API (Cloudflare)
 

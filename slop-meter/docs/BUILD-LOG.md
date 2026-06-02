@@ -247,14 +247,48 @@ A faithful log, because these are the most useful part for an article.
 
 ---
 
+## 11a. Content versioning & the feedback loop
+
+The point of the project isn't really the votes — it's the loop: pair each rating
+with the *exact content that earned it*, learn what reads as slop, and write better.
+That needs every vote bound to the version of the content the reader actually saw,
+because posts change.
+
+The design:
+
+- **Version = a hash of the post's markdown body**, computed at build time. It only
+  changes when the words change (not on frontmatter tweaks), so it groups votes by
+  content state cleanly. A bare commit SHA would have been too coarse — it bumps on
+  every deploy.
+- The post page injects `content-version` and `content-source` onto the
+  `<slop-meter>` element. The source is a per-post **`/blog/<slug>.md`** endpoint
+  that serves the raw markdown.
+- Each vote carries the version (+ source). The worker stores `content_version` on
+  the vote, and — the first time it sees a new version — captures **one snapshot per
+  `(post, version)`**, never per vote. Storage scales with *revisions*, not votes.
+- Capture is **server-side and verified**: the worker fetches the source, re-hashes
+  it, and only stores it if the hash matches the claimed version. The browser never
+  uploads content, and a client can't poison the store. Fetches are origin-allowlisted
+  (SSRF guard) and run in the background via `waitUntil`.
+
+**Why store the text at all, when it's on the live site / in git?** Because the live
+`.md` and git history both change or can be rewritten. Snapshotting into D1 makes the
+rating-to-content link durable and **independent of git** — so history can still be
+scrubbed without losing the dataset. Adopters who prefer to keep history can flip
+`SNAPSHOT_MODE=ref` and store just a git-pinned source URL instead (no copy).
+
+A neat side effect: the `/blog/<slug>.md` endpoints built for snapshots are also a
+clean, token-efficient representation for LLM/agent readers — the seed of a separate
+"make the site agent-readable" project.
+
 ## 12. Roadmap
 
 - **Remote MCP on the Worker** → connect in Claude Cowork, ask for insights, and
-  have Claude render a **live artifact** dashboard. `/summary` is already the data
-  source this would wrap. (The token stays server-side in the MCP layer, never in a
-  shared artifact.)
-- **Trend over time** — D1 keeps per-vote timestamps, so "slop perception over the
-  first week vs. later" is queryable; surface it in the dashboard.
+  have Claude render a **live artifact** dashboard. `/summary` and `/versions` are
+  already the data sources this would wrap. (The token stays server-side in the MCP
+  layer, never in a shared artifact.)
+- **Surface versions in the dashboard** — `/versions` exists; show the
+  "v1: 71 → v2: 38" trend as you revise a post.
 - **Abuse hardening** — optional per-IP global rate limit; optional proof-of-work
   or Turnstile if it ever gets gamed.
 - **Distribution** — publish the widget to npm / a CDN so other sites embed it with

@@ -9,9 +9,11 @@ interface Props {
   tags: string[];
   ogImage?: string;
   linkedinSnippet?: string;
+  contentVersion?: string;
+  contentSource?: string;
 }
 
-const { title, description, pubDate, updatedDate, tags, ogImage, linkedinSnippet } = Astro.props;
+const { title, description, pubDate, updatedDate, tags, ogImage, linkedinSnippet, contentVersion, contentSource } = Astro.props;
 
 const dateFormatted = pubDate.toLocaleDateString('en-AU', {
   year: 'numeric', month: 'long', day: 'numeric',
@@ -99,7 +101,12 @@ const SLOP_ENDPOINT = 'https://slop.intercate.net';
     {SLOP_ENDPOINT && (
       <section class="slop-section content-container">
         <h2 class="comments-heading">Reader signal</h2>
-        <slop-meter post-id={Astro.url.pathname} endpoint={SLOP_ENDPOINT}></slop-meter>
+        <slop-meter
+          post-id={Astro.url.pathname}
+          endpoint={SLOP_ENDPOINT}
+          content-version={contentVersion}
+          content-source={contentSource}
+        ></slop-meter>
         <p class="slop-note">
           Why the slider? I use generative AI to help research and assemble what's here —
           <a href="/disclaimer#ai">how I use AI</a>.
