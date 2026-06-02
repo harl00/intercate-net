@@ -24,6 +24,20 @@ import Base from '../layouts/Base.astro';
         This site is maintained independently for the purposes of personal reflection, idea
         development, and the sharing of lived experience.
       </p>
+
+      <h2 id="ai">How I use generative AI</h2>
+      <p>
+        I use generative AI tools to help research, draft, and collate the material across
+        this site. I treat them as an assistant — for gathering sources, structuring thinking,
+        and tidying prose — but the judgement, the editorial decisions, and the responsibility
+        for what's published are mine.
+      </p>
+      <p>
+        I think being transparent about this matters, so I'd rather say it plainly here than
+        leave it unsaid. The slop-meter at the foot of each post comes from the same instinct:
+        an anonymous, low-friction way for you to tell me when something reads more like a
+        machine than a person. I read that signal, and I use it to write better.
+      </p>
     </div>
   </div>
 </Base>
@@ -32,4 +46,7 @@ import Base from '../layouts/Base.astro';
 .page-header { padding: 4rem 0 1rem; }
 .page-header h1 { margin: 0.75rem 0; }
 .prose { padding-bottom: 6rem; }
+.prose h2 { margin: 2.5rem 0 1rem; font-size: 1.5rem; }
+/* offset anchor jumps so the heading clears the sticky nav */
+.prose h2[id] { scroll-margin-top: 80px; }
 </style>

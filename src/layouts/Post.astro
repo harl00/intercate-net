@@ -100,6 +100,10 @@ const SLOP_ENDPOINT = 'https://slop.intercate.net';
       <section class="slop-section content-container">
         <h2 class="comments-heading">Reader signal</h2>
         <slop-meter post-id={Astro.url.pathname} endpoint={SLOP_ENDPOINT}></slop-meter>
+        <p class="slop-note">
+          Why the slider? I use generative AI to help research and assemble what's here —
+          <a href="/disclaimer#ai">how I use AI</a>.
+        </p>
         <script is:inline type="module" src="/slop-meter.js"></script>
       </section>
     )}
@@ -259,6 +263,14 @@ h1 { margin-bottom: 1rem; }
   padding-top: 1rem;
   padding-bottom: 2rem;
 }
+.slop-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.9rem;
+  line-height: 1.5;
+}
+.slop-note a { color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+.slop-note a:hover { color: var(--accent); }
 /* Custom properties pierce the shadow DOM, so the widget adopts the site theme. */
 .slop-section slop-meter {
   --slop-border: var(--border);
