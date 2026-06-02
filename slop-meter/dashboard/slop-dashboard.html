@@ -55,6 +55,21 @@
     .bar { display: inline-block; height: 7px; border-radius: 4px; vertical-align: middle; margin-left: 0.5rem; min-width: 2px; }
     .warn { color: var(--slop); font-weight: 700; }
     .hide { display: none; }
+    .vtoggle { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 4px;
+      cursor: pointer; font-size: 0.7rem; line-height: 1; padding: 0.15rem 0.4rem; margin-right: 0.5rem; }
+    .vtoggle:hover, .vtoggle.open { color: var(--accent); border-color: var(--accent); }
+    .vcount { font-size: 0.68rem; color: var(--muted); margin-left: 0.5rem; }
+    tr.detail > td { background: var(--surface); padding: 1rem 1.25rem; }
+    .vmeta { color: var(--muted); display: block; margin-bottom: 0.5rem; }
+    .vdelta { font-weight: 700; margin-left: 0.5rem; }
+    .trend { display: flex; align-items: flex-end; gap: 0.6rem; height: 96px; margin: 0.25rem 0 1rem; overflow-x: auto; }
+    .trend .col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 0 0 auto; }
+    .trend .tval { font-size: 0.72rem; font-weight: 700; margin-bottom: 3px; }
+    .trend .tbar { width: 26px; border-radius: 3px 3px 0 0; }
+    .trend .tlab { font-size: 0.6rem; color: var(--muted); margin-top: 4px; font-family: monospace; }
+    .vtable { width: 100%; font-size: 0.78rem; border-collapse: collapse; }
+    .vtable th, .vtable td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border-sub); }
+    .vtable td.num, .vtable th.num { text-align: right; font-variant-numeric: tabular-nums; }
     .foot { color: var(--muted); font-size: 0.78rem; margin-top: 1.5rem; }
     .foot a { color: var(--muted); }
   </style>
@@ -139,19 +154,79 @@
       $('s-avg').textContent = totalVotes ? Math.round(weighted / totalVotes) + ' ' + emoji(Math.round(weighted/totalVotes)) : '–';
       $('s-flag').textContent = flagged.length;
 
-      $('rows').innerHTML = posts.map(p => {
+      $('rows').innerHTML = posts.map((p, i) => {
         const flag = p.average >= FLAG_AVG && p.count >= FLAG_MIN_VOTES;
         const url = p.post_id.startsWith('/') ? SITE + p.post_id : p.post_id;
+        const vcount = p.versions > 1 ? `<span class="vcount">${p.versions} versions</span>` : '';
         return `<tr class="${flag ? 'flag' : ''}">
-          <td class="post"><a href="${url}" target="_blank" rel="noopener">${p.post_id}</a></td>
+          <td class="post">
+            <button class="vtoggle" data-id="${p.post_id}" data-row="${i}" aria-label="Show versions">▸</button>
+            <a href="${url}" target="_blank" rel="noopener">${p.post_id}</a>${vcount}
+          </td>
           <td class="num">${p.count}</td>
           <td class="num"><span class="score" style="color:${colorFor(p.average)}">${p.average} ${emoji(p.average)}</span>
             <span class="bar" style="width:${Math.max(2, p.average/2)}px;background:${colorFor(p.average)}"></span></td>
           <td class="num">${p.min}–${p.max}</td>
           <td class="num">${fmtDate(p.last_at)}</td>
           <td>${flag ? '<span class="warn">⚠</span>' : ''}</td>
-        </tr>`;
+        </tr>
+        <tr class="detail hide" id="detail-${i}"><td colspan="6"><div class="vcell" data-loaded="0"></div></td></tr>`;
       }).join('') || '<tr><td colspan="6" style="color:var(--muted)">No votes yet.</td></tr>';
+    }
+
+    function renderVersions(vs) {
+      if (!vs.length) return '<span class="vmeta">No version data yet.</span>';
+      const chron = [...vs].sort((a, b) => (a.last_at ?? 0) - (b.last_at ?? 0));
+      const withV = chron.filter(v => v.version);
+      let delta = '';
+      if (withV.length >= 2) {
+        const d = (withV[withV.length - 1].average ?? 0) - (withV[0].average ?? 0);
+        const arrow = d < 0 ? '↓' : d > 0 ? '↑' : '→';
+        const col = d < 0 ? 'var(--human)' : d > 0 ? 'var(--slop)' : 'var(--muted)';
+        delta = `<span class="vdelta" style="color:${col}">${arrow} ${d > 0 ? '+' : ''}${d} across ${withV.length} versions</span>`;
+      }
+      const bars = chron.map(v => {
+        const a = v.average ?? 0;
+        const h = Math.max(3, Math.round(a / 100 * 72));
+        const label = v.version ? v.version.slice(0, 6) : '—';
+        return `<div class="col" title="${v.count} vote(s)${v.has_text ? ' · snapshot ✓' : ''}">
+          <span class="tval" style="color:${colorFor(v.average)}">${v.average ?? '–'}</span>
+          <span class="tbar" style="height:${h}px;background:${colorFor(v.average)}"></span>
+          <span class="tlab">${label}</span>
+        </div>`;
+      }).join('');
+      const rows = chron.map(v => `<tr>
+        <td>${v.version ? v.version.slice(0, 10) : '<em>pre-versioning</em>'}</td>
+        <td class="num">${v.count}</td>
+        <td class="num" style="color:${colorFor(v.average)}">${v.average ?? '–'} ${v.average != null ? emoji(v.average) : ''}</td>
+        <td class="num">${v.min}–${v.max}</td>
+        <td>${v.has_text ? 'text ✓' : (v.source_url ? 'ref' : '—')}</td>
+        <td class="num">${fmtDate(v.last_at)}</td>
+      </tr>`).join('');
+      return `<div class="vbody">
+        <p class="vmeta">Slop rating by content version (oldest → newest). ${delta}</p>
+        <div class="trend">${bars}</div>
+        <table class="vtable">
+          <thead><tr><th>Version</th><th class="num">Votes</th><th class="num">Avg</th><th class="num">Range</th><th>Snapshot</th><th class="num">Last</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    }
+
+    async function loadVersions(postId, container) {
+      const ep = (localStorage.getItem('slop-ep') || '').replace(/\/+$/, '');
+      const tk = localStorage.getItem('slop-token') || '';
+      container.innerHTML = '<span class="vmeta">Loading…</span>';
+      try {
+        const res = await fetch(ep + '/versions?id=' + encodeURIComponent(postId), {
+          headers: { Authorization: 'Bearer ' + tk },
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        container.innerHTML = renderVersions(json.versions || []);
+      } catch (e) {
+        container.innerHTML = '<span class="vmeta">Could not load versions: ' + e.message + '</span>';
+      }
     }
 
     async function load() {
@@ -192,6 +267,24 @@
     });
     $('signout').addEventListener('click', signout);
     $('refresh').addEventListener('click', load);
+
+    // Expand a row to lazy-load its per-version trend (delegated — rows are re-rendered).
+    $('rows').addEventListener('click', (e) => {
+      const btn = e.target.closest('.vtoggle');
+      if (!btn) return;
+      const detail = document.getElementById('detail-' + btn.dataset.row);
+      if (!detail) return;
+      const open = detail.classList.toggle('hide') === false;
+      btn.textContent = open ? '▾' : '▸';
+      btn.classList.toggle('open', open);
+      if (open) {
+        const cell = detail.querySelector('.vcell');
+        if (cell.dataset.loaded === '0') {
+          cell.dataset.loaded = '1';
+          loadVersions(btn.dataset.id, cell);
+        }
+      }
+    });
     document.querySelectorAll('.sortbtn[data-sort]').forEach(b => {
       b.addEventListener('click', () => {
         sortKey = b.dataset.sort;
