@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stay or Go — cost of moving out vs commuting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF7;
+  --card:#FFFFFF;
+  --ink:#1F2421;
+  --muted:#6B7570;
+  --line:#E4E2DA;
+  --stay:#2E7D6B;
+  --stay-soft:#E6F2EE;
+  --go:#C4622D;
+  --go-soft:#FBEDE3;
+  --share:#5B6BB5;
+  --share-soft:#EAECF7;
+  --highlight:#F5E9A8;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(31,36,33,.05), 0 8px 24px -12px rgba(31,36,33,.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.display{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em;margin:0}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 96px}
+
+/* ---------- header ---------- */
+header.top{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#FFFFFF 0%,var(--paper) 100%);
+  margin-bottom:28px;
+}
+.top-inner{max-width:1180px;margin:0 auto;padding:26px 28px 22px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+h1{font-size:32px;font-weight:800;line-height:1.05}
+h1 em{font-style:normal;color:var(--go)}
+.sub{color:var(--muted);font-size:14px;margin-top:7px;max-width:56ch}
+.top-actions{display:flex;gap:9px;flex-wrap:wrap}
+
+/* ---------- buttons ---------- */
+button{font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 15px;transition:.14s;white-space:nowrap}
+button:hover{border-color:#C9C6BB;background:#fff;transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button:focus-visible{outline:2.5px solid var(--share);outline-offset:2px}
+button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+button.primary:hover{background:#000}
+button.ghost{background:transparent}
+button.tiny{font-size:12px;padding:6px 10px}
+
+/* ---------- layout ---------- */
+.grid{display:grid;grid-template-columns:352px 1fr;gap:26px;align-items:start}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card+.card{margin-top:18px}
+.card-h{padding:15px 18px 13px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-h h3{font-size:14.5px;font-weight:600}
+.card-h .hint{font-size:11.5px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+.card-b{padding:15px 18px 18px}
+
+/* ---------- inputs ---------- */
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 0}
+.field+.field{border-top:1px dotted #EFEDE6}
+.field label{font-size:13.5px;color:var(--ink);flex:1;min-width:0}
+.field label small{display:block;color:var(--muted);font-size:11.5px;line-height:1.35;margin-top:1px}
+.field input[type=number],.field input[type=text],.field select{
+  width:106px;flex:none;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;
+  padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FDFDFC;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.field select{text-align:left;width:132px;font-family:'Inter Tight',sans-serif}
+.field input:focus,.field select:focus{outline:none;border-color:var(--share);box-shadow:0 0 0 3px var(--share-soft)}
+.field input.wide{width:150px;text-align:left;font-family:'Inter Tight',sans-serif}
+.prefix{position:relative}
+
+.switch{display:flex;align-items:center;gap:8px}
+input[type=checkbox]{width:17px;height:17px;accent-color:var(--stay);cursor:pointer}
+
+.seg{display:flex;background:#F2F1EC;border-radius:9px;padding:3px;gap:3px}
+.seg button{flex:1;border:none;background:transparent;padding:7px 6px;font-size:12.5px;border-radius:7px;box-shadow:none}
+.seg button:hover{transform:none;background:#EAE8E1}
+.seg button.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.09);font-weight:600}
+
+/* ---------- results ---------- */
+.verdict{
+  background:linear-gradient(135deg,#FFFFFF 0%,#FCFBF6 100%);
+  border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:22px 24px;margin-bottom:22px;
+}
+.verdict .lead{font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.verdict .big{font-family:'Bricolage Grotesque';font-size:29px;font-weight:800;line-height:1.15;letter-spacing:-.025em}
+.verdict .big .n{color:var(--go)}
+.verdict .note{color:var(--muted);font-size:13.5px;margin-top:10px;max-width:70ch}
+
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+.scen{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
+.scen-h{padding:13px 16px 12px;border-bottom:1px solid var(--line)}
+.scen-h .tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:5px;display:inline-block;margin-bottom:7px}
+.scen-h h4{font-family:'Bricolage Grotesque';font-size:16px;font-weight:600;margin:0;letter-spacing:-.015em}
+.scen-h .where{font-size:12px;color:var(--muted);margin-top:2px}
+.scen[data-k=stay] .tag{background:var(--stay-soft);color:var(--stay)}
+.scen[data-k=move] .tag{background:var(--go-soft);color:var(--go)}
+.scen[data-k=share] .tag{background:var(--share-soft);color:var(--share)}
+.scen[data-k=stay] .headline{color:var(--stay)}
+.scen[data-k=move] .headline{color:var(--go)}
+.scen[data-k=share] .headline{color:var(--share)}
+
+.money{padding:15px 16px;border-bottom:1px solid var(--line);background:#FCFCFA}
+.money .headline{font-family:'IBM Plex Mono',monospace;font-size:25px;font-weight:500;letter-spacing:-.02em}
+.money .headline span{font-size:13px;color:var(--muted);font-weight:400;letter-spacing:0}
+.money .k{font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:3px}
+.money .sec{font-size:12.5px;color:var(--muted);margin-top:6px}
+
+.lines{padding:6px 16px 14px}
+.line{display:flex;justify-content:space-between;gap:10px;padding:5.5px 0;font-size:13px;border-bottom:1px dotted #F0EEE7}
+.line:last-child{border-bottom:none}
+.line .l{color:var(--muted)}
+.line .v{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.line.tot{font-weight:600;border-top:1.5px solid var(--line);margin-top:5px;padding-top:9px;border-bottom:none}
+.line.tot .l{color:var(--ink)}
+.line.pos .v{color:var(--stay)}
+.line.neg .v{color:var(--go)}
+
+/* bar */
+.bars{padding:14px 16px 16px}
+.bar-row{margin-bottom:11px}
+.bar-row:last-child{margin-bottom:0}
+.bar-lab{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.bar-lab .v{font-family:'IBM Plex Mono',monospace}
+.track{height:9px;background:#F1EFE9;border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+
+/* deposit chart */
+.chart{padding:16px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:0 16px 14px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* commute */
+.shift{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:8px 0;font-size:13px;border-bottom:1px dotted #F0EEE7}
+.shift:last-child{border-bottom:none}
+.shift .nm{font-weight:500}
+.shift .nm small{display:block;color:var(--muted);font-weight:400;font-size:11.5px}
+.shift .t{font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;color:var(--muted)}
+.pill{font-size:11px;font-family:'IBM Plex Mono',monospace;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.pill.ok{background:var(--stay-soft);color:var(--stay)}
+.pill.mid{background:#FDF3DC;color:#8A6B18}
+.pill.bad{background:var(--go-soft);color:var(--go)}
+
+/* formulas */
+.formula{padding:11px 0;border-bottom:1px dotted #F0EEE7}
+.formula:last-child{border-bottom:none}
+.formula .fn{font-size:13px;font-weight:500;margin-bottom:2px}
+.formula .fd{font-size:11.5px;color:var(--muted);margin-bottom:6px}
+.formula input{width:100%;font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7}
+.formula input:focus{outline:none;border-color:var(--share);box-shadow:0 0 0 3px var(--share-soft)}
+.formula input.err{border-color:var(--go);background:var(--go-soft)}
+.formula .msg{font-size:11.5px;color:var(--go);margin-top:4px;display:none}
+.formula .msg.show{display:block}
+.vars{font-size:11.5px;color:var(--muted);background:#F7F6F1;border-radius:8px;padding:10px 12px;margin-bottom:12px;line-height:1.7}
+.vars code{font-family:'IBM Plex Mono',monospace;background:#EDEBE3;padding:1px 5px;border-radius:4px;font-size:11px}
+
+/* map */
+.maproutes{padding:0 16px 16px}
+.route{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted #F0EEE7;font-size:13px}
+.route:last-child{border-bottom:none}
+.route .rn{font-weight:500}
+.route .rn small{display:block;color:var(--muted);font-weight:400;font-size:11.5px}
+.route .rv{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);white-space:nowrap}
+
+/* toast */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-size:13.5px;opacity:0;transition:.28s;z-index:99;pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.22)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.foot{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.7}
+
+details.acc summary{cursor:pointer;font-size:13px;color:var(--muted);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::before{content:'▸';transition:.2s;display:inline-block}
+details.acc[open] summary::before{transform:rotate(90deg)}
+
+@media print{
+  body{background:#fff}
+  .noprint{display:none!important}
+  .card,.scen,.verdict{box-shadow:none;break-inside:avoid}
+  .grid{grid-template-columns:1fr}
+}
+/* ================= WIZARD ================= */
+#wiz{position:fixed;inset:0;z-index:200;background:var(--paper);overflow-y:auto;display:none}
+#wiz.on{display:block}
+body.wizopen{overflow:hidden}
+.wiz-inner{max-width:640px;margin:0 auto;padding:40px 28px 80px;min-height:100%;display:flex;flex-direction:column}
+
+.wiz-bar{position:sticky;top:0;background:var(--paper);padding-bottom:16px;z-index:2}
+.wiz-prog{height:4px;background:#EBE9E1;border-radius:99px;overflow:hidden;margin-bottom:14px}
+.wiz-prog i{display:block;height:100%;background:var(--stay);border-radius:99px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.wiz-meta{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.wiz-meta button{border:none;background:none;padding:4px 0;font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.wiz-meta button:hover{color:var(--ink);transform:none;background:none}
+
+.wiz-step{flex:1;padding-top:26px;animation:wizIn .34s cubic-bezier(.2,.7,.3,1)}
+@keyframes wizIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.wiz-step{animation:none}.wiz-prog i{transition:none}.fill{transition:none}}
+
+.wiz-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--go);margin-bottom:10px}
+.wiz-q{font-family:'Bricolage Grotesque';font-size:27px;font-weight:800;letter-spacing:-.025em;line-height:1.15;margin-bottom:9px}
+.wiz-help{color:var(--muted);font-size:14px;line-height:1.55;margin-bottom:24px;max-width:52ch}
+
+.wiz-choices{display:grid;gap:10px;margin-bottom:8px}
+.choice{display:flex;align-items:flex-start;gap:13px;width:100%;text-align:left;padding:15px 17px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);transition:.15s;font-size:14.5px;line-height:1.4}
+.choice:hover{border-color:#C4C0B3;transform:translateY(-1px);box-shadow:var(--shadow)}
+.choice.sel{border-color:var(--stay);background:var(--stay-soft);box-shadow:0 0 0 3px rgba(46,125,107,.11)}
+.choice .ci{font-size:20px;line-height:1.1;flex:none;width:26px;text-align:center}
+.choice .ct{flex:1;min-width:0}
+.choice .ct b{display:block;font-weight:600;margin-bottom:2px}
+.choice .ct small{color:var(--muted);font-size:12.5px;display:block;line-height:1.45}
+.choice.sel .ct small{color:#3F6B60}
+
+.wiz-num{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.wiz-num .dol{font-family:'Bricolage Grotesque';font-size:30px;font-weight:600;color:var(--muted)}
+.wiz-num input{font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:500;width:190px;padding:9px 13px;border:1.5px solid var(--line);border-radius:11px;background:var(--card);color:var(--ink);font-variant-numeric:tabular-nums}
+.wiz-num input:focus{outline:none;border-color:var(--stay);box-shadow:0 0 0 3px var(--stay-soft)}
+.wiz-num .unit{color:var(--muted);font-size:14px}
+.wiz-sub{font-size:13px;color:var(--muted);margin-top:10px}
+.wiz-sub b{color:var(--ink);font-weight:600}
+
+.wiz-slider{margin:6px 0 4px}
+.wiz-slider input[type=range]{width:100%;accent-color:var(--stay);height:26px}
+.wiz-scale{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+
+.choice.unsure{border-style:dashed;background:#FCFCFA}
+.choice.unsure .ci{color:var(--muted);font-family:'Bricolage Grotesque';font-weight:800}
+.choice.unsure.sel{border-style:solid;border-color:var(--share);background:var(--share-soft);box-shadow:0 0 0 3px rgba(91,107,181,.11)}
+.choice.unsure.sel .ct small{color:#4A579B}
+.est{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--share-soft);color:var(--share);padding:2px 6px;border-radius:4px;margin-left:7px;vertical-align:1px}
+
+.wiz-nav{display:flex;gap:10px;align-items:center;padding-top:28px;margin-top:auto;border-top:1px solid var(--line)}
+.wiz-nav .sp{flex:1}
+.wiz-nav button.primary{padding:12px 26px;font-size:14.5px}
+.wiz-nav .kbd{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+
+/* welcome + summary */
+.wiz-hero{text-align:left;padding-top:8px}
+.wiz-hero h2{font-family:'Bricolage Grotesque';font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:14px}
+.wiz-hero h2 em{font-style:normal;color:var(--go)}
+.wiz-hero p{color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 14px;max-width:50ch}
+.wiz-hero ul{margin:0 0 22px;padding-left:18px;color:var(--muted);font-size:14px;line-height:1.85}
+.wiz-hero ul b{color:var(--ink);font-weight:600}
+
+.recap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 17px;margin:4px 0 20px;box-shadow:var(--shadow)}
+.recap .r{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-size:13.5px;border-bottom:1px dotted #F0EEE7}
+.recap .r:last-child{border-bottom:none}
+.recap .r .l{color:var(--muted)}
+.recap .r .v{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+
+.peek{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 20px}
+.peek .p{border:1px solid var(--line);border-radius:11px;padding:13px 14px;background:var(--card);box-shadow:var(--shadow)}
+.peek .p .n{font-size:12px;color:var(--muted);margin-bottom:5px}
+.peek .p .v{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:500}
+.peek .p .s{font-size:11.5px;color:var(--muted);margin-top:3px}
+.peek .p[data-k=stay] .v{color:var(--stay)}
+.peek .p[data-k=move] .v{color:var(--go)}
+.peek .p[data-k=share] .v{color:var(--share)}
+@media(max-width:560px){.peek{grid-template-columns:1fr}.wiz-hero h2{font-size:30px}.wiz-q{font-size:23px}}
+
+</style>
+</head>
+<body>
+
+<div id="wiz" role="dialog" aria-modal="true" aria-label="Setup questions">
+  <div class="wiz-inner">
+    <div class="wiz-bar">
+      <div class="wiz-prog"><i id="wizFill" style="width:0%"></i></div>
+      <div class="wiz-meta">
+        <span id="wizCount"></span>
+        <button id="wizSkip">Skip to the dashboard</button>
+      </div>
+    </div>
+    <div id="wizBody"></div>
+    <div class="wiz-nav">
+      <button id="wizBack">Back</button>
+      <span class="sp"></span>
+      <span class="kbd">press Enter to continue</span>
+      <button id="wizNext" class="primary">Next</button>
+    </div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="top-inner">
+    <div>
+      <div class="eyebrow">Centenary suburbs → Mater Private Redland</div>
+      <h1>Stay and drive, or <em>move out?</em></h1>
+      <div class="sub">Every number here is a guess until you change it. Put in what you actually earn and what rent you're actually seeing, and the three columns will tell you what each choice really costs.</div>
+    </div>
+    <div class="top-actions noprint">
+      <button id="btnShare" class="primary">Copy share link</button>
+      <button id="btnPrint">Save as PDF</button>
+      <button id="btnCsv">Export CSV</button>
+      <button id="btnWizard" class="ghost">Guided setup</button>
+      <button id="btnReset" class="ghost">Reset</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="grid">
+
+  <!-- ============ LEFT: INPUTS ============ -->
+  <div class="noprint">
+
+    <div class="card">
+      <div class="card-h"><h3>Your money</h3><span class="hint">per week</span></div>
+      <div class="card-b" id="paneIncome"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>Living at home</h3><span class="hint">Option A</span></div>
+      <div class="card-b" id="paneHome"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>The drive</h3><span class="hint">both ways</span></div>
+      <div class="card-b" id="paneDrive"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>Own place</h3><span class="hint">Option B</span></div>
+      <div class="card-b" id="paneRent"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>Share house</h3><span class="hint">Option C</span></div>
+      <div class="card-b" id="paneShare"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>Everyday costs</h3><span class="hint">applies to B & C</span></div>
+      <div class="card-b" id="paneLife"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>Saving up</h3><span class="hint">deposit goal</span></div>
+      <div class="card-b" id="paneGoal"></div>
+    </div>
+
+  </div>
+
+  <!-- ============ RIGHT: RESULTS ============ -->
+  <div>
+    <div class="verdict">
+      <div class="lead">The short version</div>
+      <div class="big" id="verdictBig">—</div>
+      <div class="note" id="verdictNote"></div>
+    </div>
+
+    <div class="cols" id="scenarios"></div>
+
+    <div class="card">
+      <div class="card-h"><h3>Where the money goes each week</h3><span class="hint">left over after everything</span></div>
+      <div class="bars" id="barsWrap"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>Savings, if you keep whatever's left over</h3><span class="hint" id="goalHint"></span></div>
+      <div class="chart" id="chartWrap"></div>
+      <div class="legend" id="chartLegend"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>The commute, shift by shift</h3><span class="hint">Redland Bay</span></div>
+      <div class="card-b" style="padding-top:8px" id="shiftWrap"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h3>Which way you'd drive</h3><span class="hint">~46 km each way</span></div>
+      <div class="maproutes" id="routeWrap"></div>
+    </div>
+
+    <div class="card noprint">
+      <div class="card-h"><h3>Change the maths</h3><span class="hint">edit any formula</span></div>
+      <div class="card-b">
+        <div class="vars" id="varsHelp"></div>
+        <div id="formulaWrap"></div>
+        <div style="margin-top:14px;display:flex;gap:8px">
+          <button class="tiny" id="btnFormReset">Put the formulas back to normal</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      Numbers are starting estimates for South East Queensland in 2026 — rent, fuel and tolls all move around, so replace them with real quotes as you find them.
+      Nothing you type is saved or sent anywhere. Refresh the page and it all goes back to the defaults; use <strong>Copy share link</strong> if you want to keep or send a version.
+    </div>
+  </div>
+
+</div>
+</div>
+<div id="toast"></div>
+<script>
+/* ============ DEFAULTS ============ */
+const DEF = {
+  // income
+  payAfterTax: 1350,      // $/wk take-home, new grad RN ~ Level 1.1
+  shiftsPerWeek: 4,
+  weeksWorkedPerYear: 46,
+
+  // at home
+  boardRent: 100,         // $/wk board charged at home
+  homeFoodShare: 25,      // $/wk contribution to groceries at home
+  homeInternetShare: 0,
+
+  // driving
+  kmEachWay: 46,
+  minsEachWay: 55,
+  fuelPricePerL: 1.85,
+  fuelUseL100: 7.5,
+  tollEachWay: 5.40,
+  tollDaysPerWeek: 4,
+  servicePerYear: 1400,   // servicing + tyres + extra depreciation from the km
+  parkingPerShift: 0,
+
+  // own place
+  rentOwn: 480,
+  bondWeeks: 4,
+  moveInCost: 2500,       // furniture, whitegoods, removalist, first bits
+  localKmEachWay: 6,
+  localMinsEachWay: 12,
+
+  // share house
+  rentShare: 260,
+  shareBills: 45,         // usually bills-included-ish, lower per head
+  shareMoveIn: 900,
+
+  // living costs (own place)
+  electricity: 38,
+  water: 12,
+  internet: 22,
+  contentsIns: 8,
+  groceries: 140,
+  household: 20,
+
+  // both
+  carRegoInsPerYear: 1900,
+  phone: 15,
+  subs: 25,
+  social: 90,
+  health: 20,
+
+  // goal
+  depositGoal: 60000,
+  startingSavings: 2000,
+  savingsRate: 4.5,
+  horizonYears: 5
+};
+
+const FORMULA_DEF = {
+  fuelWeekly: {
+    name: 'Fuel for the commute',
+    desc: 'Petrol burnt driving to work and back',
+    src: 'kmEachWay * 2 * shiftsPerWeek * (fuelUseL100/100) * fuelPricePerL'
+  },
+  tollWeekly: {
+    name: 'Tolls',
+    desc: 'Only counts the days you choose to take the toll road',
+    src: 'tollEachWay * 2 * tollDaysPerWeek'
+  },
+  wearWeekly: {
+    name: 'Wear and tear',
+    desc: 'Servicing, tyres and value lost from the extra kilometres',
+    src: 'servicePerYear / 52'
+  },
+  commuteHours: {
+    name: 'Hours in the car each week',
+    desc: 'Time you would get back by moving closer',
+    src: 'minsEachWay * 2 * shiftsPerWeek / 60'
+  },
+  localDriveWeekly: {
+    name: 'Driving if you live nearby',
+    desc: 'Short local trips to the hospital instead',
+    src: 'localKmEachWay * 2 * shiftsPerWeek * (fuelUseL100/100) * fuelPricePerL'
+  },
+  homeWeekly: {
+    name: 'Total weekly cost — living at home',
+    desc: 'Board, food money, the commute and your own bills',
+    src: 'boardRent + homeFoodShare + homeInternetShare + fuelWeekly + tollWeekly + wearWeekly + carRegoInsPerYear/52 + parkingPerShift*shiftsPerWeek + phone + subs + social + health'
+  },
+  ownWeekly: {
+    name: 'Total weekly cost — your own place',
+    desc: 'Rent, all the bills, and short local driving',
+    src: 'rentOwn + electricity + water + internet + contentsIns + groceries + household + localDriveWeekly + carRegoInsPerYear/52 + parkingPerShift*shiftsPerWeek + phone + subs + social + health'
+  },
+  shareWeekly: {
+    name: 'Total weekly cost — share house',
+    desc: 'Your share of rent and bills, food, and local driving',
+    src: 'rentShare + shareBills + groceries*0.8 + household*0.7 + localDriveWeekly + carRegoInsPerYear/52 + parkingPerShift*shiftsPerWeek + phone + subs + social + health'
+  },
+  upfrontOwn: {
+    name: 'Money needed up front — own place',
+    desc: 'Bond, rent in advance, and setting the place up',
+    src: 'rentOwn * bondWeeks + rentOwn * 2 + moveInCost'
+  },
+  upfrontShare: {
+    name: 'Money needed up front — share house',
+    desc: 'Usually a smaller bond and much less furniture',
+    src: 'rentShare * bondWeeks + rentShare * 2 + shareMoveIn'
+  }
+};
+
+/* ============ FIELD DEFINITIONS ============ */
+const PANES = {
+  paneIncome: [
+    ['payAfterTax','Take-home pay','$ per week, after tax','$'],
+    ['shiftsPerWeek','Shifts per week','How many days you drive in',''],
+    ['weeksWorkedPerYear','Weeks worked a year','Leaves room for leave',''],
+  ],
+  paneHome: [
+    ['boardRent','Board you pay us','Set to 0 if we charge nothing','$'],
+    ['homeFoodShare','Groceries you chip in','$ per week','$'],
+    ['homeInternetShare','Internet you chip in','$ per week','$'],
+  ],
+  paneDrive: [
+    ['kmEachWay','Kilometres each way','Centenary to Redland Bay ≈ 46','km'],
+    ['minsEachWay','Minutes each way','Before traffic — see shift table','min'],
+    ['fuelUseL100','Fuel use','Litres per 100 km','L'],
+    ['fuelPricePerL','Petrol price','$ per litre','$'],
+    ['tollEachWay','Toll each way','Gateway southbound run','$'],
+    ['tollDaysPerWeek','Days you take the toll','0 = always the free route',''],
+    ['servicePerYear','Servicing & tyres','$ a year from the extra km','$'],
+    ['parkingPerShift','Parking per shift','$ if the hospital charges','$'],
+  ],
+  paneRent: [
+    ['rentOwn','Rent','$ per week for a 1-bed unit','$'],
+    ['bondWeeks','Bond','Weeks of rent held as bond',''],
+    ['moveInCost','Setting up','Bed, fridge, washer, removalist','$'],
+    ['localKmEachWay','Local drive each way','Living close by','km'],
+    ['localMinsEachWay','Local minutes each way','','min'],
+  ],
+  paneShare: [
+    ['rentShare','Your share of rent','$ per week','$'],
+    ['shareBills','Your share of bills','Power, water, internet combined','$'],
+    ['shareMoveIn','Setting up','Usually furnished — much less','$'],
+  ],
+  paneLife: [
+    ['electricity','Electricity','$ per week, own place','$'],
+    ['water','Water','$ per week','$'],
+    ['internet','Internet','$ per week','$'],
+    ['contentsIns','Contents insurance','$ per week','$'],
+    ['groceries','Groceries','$ per week, feeding yourself','$'],
+    ['household','Household bits','Cleaning, toiletries, odds and ends','$'],
+    ['carRegoInsPerYear','Rego & car insurance','$ a year','$'],
+    ['phone','Phone','$ per week','$'],
+    ['subs','Subscriptions','Streaming, gym, apps','$'],
+    ['social','Going out & personal','$ per week','$'],
+    ['health','Health & medical','$ per week','$'],
+  ],
+  paneGoal: [
+    ['depositGoal','Deposit you want','$ target','$'],
+    ['startingSavings','Already saved','$','$'],
+    ['savingsRate','Interest on savings','% a year','%'],
+    ['horizonYears','Years to project','Chart length','yr'],
+  ]
+};
+
+/* ============ ROUTES & SHIFTS ============ */
+const ROUTES = [
+  {n:'Gateway Motorway (toll)', d:'Centenary Hwy → Ipswich Mwy → Gateway → Cleveland–Redland Bay Rd', km:'~48 km', t:'50–60 min', toll:'toll'},
+  {n:'Logan Motorway → Mt Cotton', d:'Logan Mwy → Pacific Mwy → Mt Cotton Rd', km:'~52 km', t:'55–70 min', toll:'part toll'},
+  {n:'Free route, south of the river', d:'Ipswich Rd → Granard → Beaudesert Rd → Mt Cotton', km:'~50 km', t:'65–85 min', toll:'no toll'}
+];
+
+const SHIFTS = [
+  {n:'Early / AM', s:'Leave 5:15am, start 6:45am', base:0.85, note:'Empty roads — the best commute of the three'},
+  {n:'Late / PM', s:'Leave 12:15pm, start 1:45pm', base:1.05, note:'Fine going in, but you come home at 10pm'},
+  {n:'Night', s:'Leave 8:30pm, start 9:45pm', base:0.80, note:'Quick drive in. Driving home at 8am after a night shift is the risk'},
+  {n:'Day (office hours)', s:'Leave 6:45am, start 8:15am', base:1.35, note:'Straight through peak both ways — the worst case'}
+];
+
+/* ============ STATE ============ */
+let S = {...DEF};
+let F = {};
+Object.keys(FORMULA_DEF).forEach(k => F[k] = FORMULA_DEF[k].src);
+
+/* ============ URL STATE ============ */
+function encodeState(){
+  const payload = {v:1, s:{}, f:{}};
+  Object.keys(DEF).forEach(k => { if (S[k] !== DEF[k]) payload.s[k] = S[k]; });
+  Object.keys(FORMULA_DEF).forEach(k => { if (F[k] !== FORMULA_DEF[k].src) payload.f[k] = F[k]; });
+  const json = JSON.stringify(payload);
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeState(str){
+  try{
+    let b = str.replace(/-/g,'+').replace(/_/g,'/');
+    while(b.length % 4) b += '=';
+    const p = JSON.parse(decodeURIComponent(escape(atob(b))));
+    if(p.s) Object.keys(p.s).forEach(k => { if(k in DEF) S[k] = p.s[k]; });
+    if(p.f) Object.keys(p.f).forEach(k => { if(k in FORMULA_DEF) F[k] = p.f[k]; });
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ============ FORMULA ENGINE ============ */
+const ORDER = ['fuelWeekly','tollWeekly','wearWeekly','commuteHours','localDriveWeekly','homeWeekly','ownWeekly','shareWeekly','upfrontOwn','upfrontShare'];
+const SAFE = /^[0-9a-zA-Z_+\-*/().,\s]*$/;
+let formulaErrors = {};
+
+function compute(){
+  const ctx = {...S};
+  formulaErrors = {};
+  for(const key of ORDER){
+    const src = F[key];
+    let val = 0;
+    if(!SAFE.test(src)){
+      formulaErrors[key] = 'Only numbers, names and + - * / ( ) are allowed.';
+    } else {
+      try{
+        const names = Object.keys(ctx);
+        const fn = new Function(...names, '"use strict";return (' + src + ');');
+        const r = fn(...names.map(n => ctx[n]));
+        if(typeof r !== 'number' || !isFinite(r)){
+          formulaErrors[key] = 'That doesn\'t come out as a number. Check the spelling of the names.';
+        } else val = r;
+      }catch(e){
+        formulaErrors[key] = 'Something in there isn\'t recognised — check spelling and brackets.';
+      }
+    }
+    ctx[key] = val;
+  }
+  return ctx;
+}
+
+/* ============ HELPERS ============ */
+const $ = s => document.querySelector(s);
+const money = n => '$' + Math.round(n).toLocaleString('en-AU');
+const money2 = n => '$' + n.toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0});
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._x); t._x = setTimeout(()=>t.classList.remove('on'), 2400);
+}
+
+/* ============ RENDER: INPUTS ============ */
+function buildInputs(){
+  Object.keys(PANES).forEach(pane => {
+    const el = document.getElementById(pane);
+    el.innerHTML = PANES[pane].map(([k,label,hint,unit]) => `
+      <div class="field">
+        <label for="in_${k}">${label}${hint?`<small>${hint}</small>`:''}</label>
+        <input type="number" id="in_${k}" data-k="${k}" step="any" value="${S[k]}">
+      </div>`).join('');
+  });
+  document.querySelectorAll('input[data-k]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const v = parseFloat(e.target.value);
+      S[e.target.dataset.k] = isFinite(v) ? v : 0;
+      render();
+    });
+  });
+}
+
+function buildFormulas(){
+  $('#varsHelp').innerHTML =
+    '<strong>How this works.</strong> Each box below is a sum. Use the names on the left-hand inputs and normal maths symbols: <code>+</code> add, <code>-</code> take away, <code>*</code> multiply, <code>/</code> divide. ' +
+    'For example <code>rentOwn + electricity</code> adds your rent and your power bill. Names you can use include: ' +
+    Object.keys(DEF).map(k=>`<code>${k}</code>`).join(' ') + '. Earlier results can be reused too, like <code>fuelWeekly</code> and <code>tollWeekly</code>.';
+
+  $('#formulaWrap').innerHTML = ORDER.map(k => `
+    <div class="formula">
+      <div class="fn">${FORMULA_DEF[k].name}</div>
+      <div class="fd">${FORMULA_DEF[k].desc}</div>
+      <input type="text" data-f="${k}" value="${F[k].replace(/"/g,'&quot;')}" spellcheck="false">
+      <div class="msg" id="msg_${k}"></div>
+    </div>`).join('');
+
+  document.querySelectorAll('input[data-f]').forEach(inp => {
+    inp.addEventListener('input', e => { F[e.target.dataset.f] = e.target.value; render(); });
+  });
+}
+
+/* ============ RENDER: RESULTS ============ */
+function render(){
+  const c = compute();
+
+  // formula errors
+  ORDER.forEach(k => {
+    const inp = document.querySelector(`input[data-f="${k}"]`);
+    const msg = document.getElementById('msg_'+k);
+    if(!inp) return;
+    if(formulaErrors[k]){ inp.classList.add('err'); msg.textContent = formulaErrors[k]; msg.classList.add('show'); }
+    else { inp.classList.remove('err'); msg.classList.remove('show'); }
+  });
+
+  const income = S.payAfterTax;
+  const scen = [
+    {k:'stay', tag:'Option A', name:'Stay at home', where:'Centenary suburbs · '+Math.round(c.commuteHours*10)/10+' hrs driving a week',
+     cost:c.homeWeekly, upfront:0, hours:c.commuteHours,
+     lines:[
+       ['Board', S.boardRent],['Groceries & internet you chip in', S.homeFoodShare+S.homeInternetShare],
+       ['Fuel', c.fuelWeekly],['Tolls', c.tollWeekly],['Wear and tear', c.wearWeekly],
+       ['Rego & insurance', S.carRegoInsPerYear/52],
+       ['Phone, subs, going out, health', S.phone+S.subs+S.social+S.health]
+     ]},
+    {k:'move', tag:'Option B', name:'Your own place', where:'Near Redland Bay · '+Math.round(S.localMinsEachWay*2*S.shiftsPerWeek/60*10)/10+' hrs driving a week',
+     cost:c.ownWeekly, upfront:c.upfrontOwn, hours:S.localMinsEachWay*2*S.shiftsPerWeek/60,
+     lines:[
+       ['Rent', S.rentOwn],
+       ['Power, water, internet, contents', S.electricity+S.water+S.internet+S.contentsIns],
+       ['Groceries & household', S.groceries+S.household],
+       ['Local driving', c.localDriveWeekly],
+       ['Rego & insurance', S.carRegoInsPerYear/52],
+       ['Phone, subs, going out, health', S.phone+S.subs+S.social+S.health]
+     ]},
+    {k:'share', tag:'Option C', name:'Share house', where:'Near Redland Bay · shared bills',
+     cost:c.shareWeekly, upfront:c.upfrontShare, hours:S.localMinsEachWay*2*S.shiftsPerWeek/60,
+     lines:[
+       ['Your share of rent', S.rentShare],
+       ['Your share of bills', S.shareBills],
+       ['Groceries & household', S.groceries*0.8+S.household*0.7],
+       ['Local driving', c.localDriveWeekly],
+       ['Rego & insurance', S.carRegoInsPerYear/52],
+       ['Phone, subs, going out, health', S.phone+S.subs+S.social+S.health]
+     ]}
+  ];
+  scen.forEach(s => s.left = income - s.cost);
+
+  // ---- verdict
+  const gapB = scen[0].left - scen[1].left;
+  const gapC = scen[0].left - scen[2].left;
+  const hrsBack = scen[0].hours - scen[1].hours;
+  $('#verdictBig').innerHTML =
+    `Your own place costs <span class="n">${money(Math.abs(gapB))} a week</span> more than staying home. ` +
+    `A share house costs <span class="n">${money(Math.abs(gapC))}</span> more.`;
+  $('#verdictNote').innerHTML =
+    `Staying home leaves you <strong>${money(scen[0].left)}</strong> a week to save. Your own place leaves <strong>${money(scen[1].left)}</strong>, a share house <strong>${money(scen[2].left)}</strong>. ` +
+    `Moving also needs <strong>${money(scen[1].upfront)}</strong> up front for a place of your own, or <strong>${money(scen[2].upfront)}</strong> for a share house — ` +
+    `and hands back about <strong>${(hrsBack).toFixed(1)} hours a week</strong> you'd otherwise spend in the car, which is around ${Math.round(hrsBack*S.weeksWorkedPerYear)} hours a year.`;
+
+  // ---- scenario cards
+  $('#scenarios').innerHTML = scen.map(s => `
+    <div class="scen" data-k="${s.k}">
+      <div class="scen-h">
+        <span class="tag">${s.tag}</span>
+        <h4>${s.name}</h4>
+        <div class="where">${s.where}</div>
+      </div>
+      <div class="money">
+        <div class="k">Left over each week</div>
+        <div class="headline">${money(s.left)}<span> of ${money(income)}</span></div>
+        <div class="sec">Costs ${money(s.cost)}/wk · ${s.upfront>0?`${money(s.upfront)} needed up front`:'nothing up front'}</div>
+      </div>
+      <div class="lines">
+        ${s.lines.map(([l,v])=>`<div class="line"><span class="l">${l}</span><span class="v">${money(v)}</span></div>`).join('')}
+        <div class="line tot"><span class="l">Total per week</span><span class="v">${money(s.cost)}</span></div>
+        <div class="line tot ${s.left>=0?'pos':'neg'}"><span class="l">Saved per week</span><span class="v">${money(s.left)}</span></div>
+      </div>
+    </div>`).join('');
+
+  // ---- bars
+  const maxAbs = Math.max(...scen.map(s=>Math.abs(s.left)), 1);
+  const COL = {stay:'var(--stay)', move:'var(--go)', share:'var(--share)'};
+  $('#barsWrap').innerHTML = scen.map(s=>`
+    <div class="bar-row">
+      <div class="bar-lab"><span>${s.name}</span><span class="v">${money(s.left)} left · ${money(s.cost)} spent</span></div>
+      <div class="track"><div class="fill" style="width:${Math.max(2,Math.abs(s.left)/maxAbs*100)}%;background:${COL[s.k]}"></div></div>
+    </div>`).join('') +
+    `<div style="margin-top:14px;font-size:12.5px;color:var(--muted)">Longer bar means more money left over at the end of the week.</div>`;
+
+  // ---- savings chart
+  drawChart(scen, c);
+
+  // ---- shifts
+  $('#shiftWrap').innerHTML = SHIFTS.map(sh=>{
+    const mins = Math.round(S.minsEachWay * sh.base);
+    const cls = mins <= 50 ? 'ok' : mins <= 65 ? 'mid' : 'bad';
+    return `<div class="shift">
+      <div class="nm">${sh.n}<small>${sh.s} · ${sh.note}</small></div>
+      <div class="t">${mins} min<br>each way</div>
+      <div><span class="pill ${cls}">${(mins*2/60).toFixed(1)} hrs/day</span></div>
+    </div>`;
+  }).join('') + `<div style="margin-top:12px;font-size:12.5px;color:var(--muted)">Based on ${S.minsEachWay} minutes each way as your baseline. Change that number on the left and these all move with it.</div>`;
+
+  // ---- routes
+  $('#routeWrap').innerHTML = ROUTES.map(r=>`
+    <div class="route">
+      <div class="rn">${r.n}<small>${r.d}</small></div>
+      <div class="rv">${r.km}<br>${r.t}</div>
+    </div>`).join('') +
+    `<div style="margin-top:12px;font-size:12.5px;color:var(--muted)">Toll route currently set at ${money2(S.tollEachWay)} each way, taken ${S.tollDaysPerWeek} of ${S.shiftsPerWeek} shifts — that's ${money(c.tollWeekly)} a week, ${money(c.tollWeekly*S.weeksWorkedPerYear)} a year.</div>`;
+
+  $('#goalHint').textContent = `goal ${money(S.depositGoal)}`;
+  window.__last = {scen, c};
+}
+
+/* ============ CHART ============ */
+function drawChart(scen, c){
+  const W=760, H=270, PL=64, PR=16, PT=14, PB=34;
+  const years = Math.max(1, Math.min(15, S.horizonYears));
+  const months = Math.round(years*12);
+  const r = S.savingsRate/100/12;
+
+  const series = scen.map(s=>{
+    const weekly = s.left;
+    const monthly = weekly*52/12;
+    let bal = S.startingSavings - s.upfront;
+    const pts=[bal];
+    for(let m=1;m<=months;m++){ bal = bal*(1+r) + monthly; pts.push(bal); }
+    return {k:s.k,name:s.name,pts};
+  });
+
+  const allV = series.flatMap(s=>s.pts).concat([S.depositGoal,0]);
+  let vMax = Math.max(...allV), vMin = Math.min(...allV);
+  const pad=(vMax-vMin)*0.08||1000; vMax+=pad; vMin-=pad;
+  const x = i => PL + (i/months)*(W-PL-PR);
+  const y = v => PT + (1-(v-vMin)/(vMax-vMin))*(H-PT-PB);
+  const COL = {stay:'#2E7D6B', move:'#C4622D', share:'#5B6BB5'};
+
+  const ticks=5, gridY=[];
+  for(let i=0;i<=ticks;i++){ const v = vMin+(vMax-vMin)*i/ticks; gridY.push(v); }
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Projected savings over time for each option">`;
+  gridY.forEach(v=>{
+    svg += `<line x1="${PL}" x2="${W-PR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="#EEECE5" stroke-width="1"/>`;
+    svg += `<text x="${PL-9}" y="${(y(v)+4).toFixed(1)}" text-anchor="end" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="#9AA29D">${v>=0?'$'+Math.round(v/1000)+'k':'-$'+Math.round(-v/1000)+'k'}</text>`;
+  });
+  if(vMin<0 && vMax>0) svg += `<line x1="${PL}" x2="${W-PR}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" stroke="#C9C6BB" stroke-width="1.2"/>`;
+  if(S.depositGoal>=vMin && S.depositGoal<=vMax){
+    svg += `<line x1="${PL}" x2="${W-PR}" y1="${y(S.depositGoal).toFixed(1)}" y2="${y(S.depositGoal).toFixed(1)}" stroke="#1F2421" stroke-width="1.3" stroke-dasharray="5 4"/>`;
+    svg += `<text x="${W-PR}" y="${(y(S.depositGoal)-7).toFixed(1)}" text-anchor="end" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="#1F2421">deposit goal ${'$'+Math.round(S.depositGoal/1000)+'k'}</text>`;
+  }
+  for(let yr=0; yr<=years; yr++){
+    const i=yr*12; if(i>months) break;
+    svg += `<text x="${x(i).toFixed(1)}" y="${H-12}" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="#9AA29D">${yr===0?'now':yr+'y'}</text>`;
+  }
+  series.forEach(s=>{
+    const d = s.pts.map((v,i)=>`${i===0?'M':'L'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    svg += `<path d="${d}" fill="none" stroke="${COL[s.k]}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const last=s.pts[s.pts.length-1];
+    svg += `<circle cx="${x(months).toFixed(1)}" cy="${y(last).toFixed(1)}" r="3.6" fill="${COL[s.k]}"/>`;
+  });
+  svg += `</svg>`;
+  document.getElementById('chartWrap').innerHTML = svg;
+
+  document.getElementById('chartLegend').innerHTML = series.map(s=>{
+    const hit = s.pts.findIndex(v=>v>=S.depositGoal);
+    const when = hit<0 ? `doesn't reach it within ${years} years` : `hits the goal in ${(hit/12).toFixed(1)} years`;
+    return `<span><i style="background:${COL[s.k]}"></i>${s.name} — ${money(s.pts[s.pts.length-1])} after ${years}y · ${when}</span>`;
+  }).join('');
+}
+
+/* ============ EXPORT ============ */
+function buildCsv(){
+  const {scen,c} = window.__last;
+  const rows = [['Stay or Go — cost comparison'],['Generated',new Date().toLocaleString('en-AU')],[],
+    ['YOUR INPUTS'],['Item','Value']];
+  Object.keys(PANES).forEach(p=>{
+    PANES[p].forEach(([k,label,hint])=> rows.push([label, S[k]]));
+  });
+  rows.push([],['RESULTS PER WEEK'],['Option','Weekly cost','Left over','Up front','Hours driving/wk']);
+  scen.forEach(s=>rows.push([s.name, s.cost.toFixed(2), s.left.toFixed(2), s.upfront.toFixed(2), s.hours.toFixed(1)]));
+  rows.push([],['BREAKDOWN']);
+  scen.forEach(s=>{ rows.push([s.name]); s.lines.forEach(([l,v])=>rows.push(['',l,v.toFixed(2)])); });
+  rows.push([],['FORMULAS USED'],['Name','Formula']);
+  ORDER.forEach(k=>rows.push([FORMULA_DEF[k].name, F[k]]));
+  return rows.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+}
+
+/* ============ WIRE UP ============ */
+function boot(){
+  const h = location.hash.replace(/^#d=/,'');
+  let shared = false;
+  if(h) { if(decodeState(h)){ shared = true; setTimeout(()=>toast('Loaded the shared version — edit anything you like'),400); } }
+  buildInputs(); buildFormulas(); render();
+  if(!shared) wizStart();
+
+  document.getElementById('btnShare').onclick = ()=>{
+    const url = location.origin + location.pathname + '#d=' + encodeState();
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(url).then(()=>{ location.hash='d='+encodeState(); toast('Link copied — everything you typed travels with it'); })
+        .catch(()=>{ location.hash='d='+encodeState(); toast('Link is in the address bar — copy it from there'); });
+    } else {
+      location.hash='d='+encodeState();
+      toast('Link is in the address bar — copy it from there');
+    }
+  };
+  document.getElementById('btnPrint').onclick = ()=>window.print();
+  document.getElementById('btnCsv').onclick = ()=>{
+    const blob = new Blob([buildCsv()],{type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'stay-or-go-comparison.csv';
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('CSV downloaded');
+  };
+  document.getElementById('btnReset').onclick = ()=>{
+    S = {...DEF}; Object.keys(FORMULA_DEF).forEach(k=>F[k]=FORMULA_DEF[k].src);
+    history.replaceState(null,'',location.pathname);
+    buildInputs(); buildFormulas(); render(); toast('Back to the starting numbers');
+  };
+  document.getElementById('btnFormReset').onclick = ()=>{
+    Object.keys(FORMULA_DEF).forEach(k=>F[k]=FORMULA_DEF[k].src);
+    buildFormulas(); render(); toast('Formulas restored');
+  };
+}
+/* ================= WIZARD ================= */
+const WIZ = [
+  {type:'welcome'},
+
+  {type:'choice', key:'shiftsPerWeek', eyebrow:'The job',
+   q:'How many shifts a week?',
+   help:'Nursing rosters vary, and you may not know yet. Pick the closest — you can fine-tune it later.',
+   opts:[
+     {v:3, i:'◔', t:'Three', s:'Part-time, or long 12-hour shifts'},
+     {v:4, i:'◑', t:'Four', s:'The usual full-time pattern'},
+     {v:5, i:'◕', t:'Five', s:'Standard 8-hour weeks'},
+     {v:6, i:'●', t:'Six', s:'Picking up extra where you can'},
+     {v:4, i:'?', t:'I don\'t know yet', s:'Fair enough — we\'ll assume four full-time shifts and you can change it once the roster lands', unsure:true}
+   ]},
+
+  {type:'number', key:'payAfterTax', eyebrow:'The job',
+   q:'What lands in your account each week?',
+   help:'After tax and super — the actual number you see. If you only know the yearly figure, divide it by 52 and take off about a quarter for tax.',
+   prefix:'$', unit:'per week',
+   sub: v => `That's about <b>$${Math.round(v*52).toLocaleString('en-AU')}</b> take-home a year.`},
+
+  {type:'choice', key:'__shiftType', eyebrow:'The drive', store:false,
+   q:'Which shift will you mostly be on?',
+   help:'This sets how long the drive to Redland Bay realistically takes, because peak hour changes everything.',
+   opts:[
+     {v:'am', i:'☀', t:'Early / AM start', s:'Leaving around 5am — roads are empty, about 47 min'},
+     {v:'pm', i:'◐', t:'Late / PM start', s:'Leaving around midday, home late at night — about 58 min'},
+     {v:'night', i:'☾', t:'Night shift', s:'Quick drive in, but you drive home tired at 8am'},
+     {v:'day', i:'⌚', t:'Business hours', s:'Peak hour both ways — about 74 min each way'},
+     {v:'mix', i:'?', t:'I don\'t know — probably a mix', s:'Most new grads rotate. We\'ll average the shifts above at about 55 min each way', unsure:true}
+   ],
+   apply: (v) => { S.minsEachWay = {am:47, pm:58, night:44, day:74, mix:55}[v]; }},
+
+  {type:'choice', key:'tollDaysPerWeek', eyebrow:'The drive',
+   q:'Would you pay the toll?',
+   help:'The Gateway run costs about $5.40 each way. The free route south of the river is roughly 15 minutes slower each trip.',
+   dyn: () => WIZ_TOLL_OPTS(),
+   },
+
+  {type:'choice', key:'boardRent', eyebrow:'Staying at home',
+   q:'If you stayed, what would you pay us?',
+   help:'Some board makes the comparison honest — otherwise home looks free in a way it wouldn\'t stay forever. Pick whatever we\'ve actually talked about.',
+   opts:[
+     {v:0,   i:'○', t:'Nothing', s:'Everything you earn is yours to save'},
+     {v:100, i:'◔', t:'$100 a week', s:'A token amount towards the household'},
+     {v:150, i:'◑', t:'$150 a week', s:'Covering your share of food and power'},
+     {v:250, i:'◕', t:'$250 a week', s:'Closer to what a room actually costs'}
+   ]},
+
+  {type:'choice', key:'__moveStyle', eyebrow:'Moving out', store:false,
+   q:'If you moved, what would you go for?',
+   help:'You\'ll see all three side by side at the end regardless — this just sets the starting rent figures.',
+   opts:[
+     {v:'share', i:'⌂', t:'A room in a share house', s:'Cheapest way in. Bills split, usually furnished'},
+     {v:'unit',  i:'▢', t:'A one-bedroom unit', s:'Your own space, your own bills'},
+     {v:'both',  i:'◫', t:'Not sure yet', s:'Use typical Redland Bay figures for both'}
+   ],
+   apply: (v) => {
+     if(v==='share'){ S.rentShare=250; S.rentOwn=470; }
+     if(v==='unit'){ S.rentOwn=490; S.rentShare=270; }
+   }},
+
+  {type:'number', key:'rentOwn', eyebrow:'Moving out',
+   q:'What rent are you seeing for a place of your own?',
+   help:'Look up a couple of real listings in Redland Bay, Victoria Point or Thornlands and put the middle one here. Around $460–$520 is typical for a one-bedder.',
+   prefix:'$', unit:'per week',
+   sub: v => `Bond and two weeks up front would be about <b>$${Math.round(v*6).toLocaleString('en-AU')}</b>, before any furniture.`},
+
+  {type:'number', key:'rentShare', eyebrow:'Moving out',
+   q:'And a room in a share house?',
+   help:'Your share only. Rooms around Redland Bay tend to run $230–$300 depending on whether bills are included.',
+   prefix:'$', unit:'per week',
+   sub: v => `Over a year that\'s <b>$${Math.round(v*52).toLocaleString('en-AU')}</b> in rent.`},
+
+  {type:'slider', key:'social', eyebrow:'Your life',
+   q:'How much do you spend on yourself in a week?',
+   help:'Going out, coffee, clothes, hair, presents — the discretionary stuff. Be honest rather than optimistic; this is the first thing that gets squeezed when rent goes up.',
+   min:0, max:300, step:10, prefix:'$',
+   sub: v => `<b>$${Math.round(v*52).toLocaleString('en-AU')}</b> a year. This stays the same across all three options, so it doesn\'t skew the comparison.`},
+
+  {type:'number', key:'depositGoal', eyebrow:'The point of all this',
+   q:'What are you saving towards?',
+   help:'A house deposit, a trip, a rainy-day fund — whatever it is, having the number here shows how each choice changes the date you get there.',
+   prefix:'$', unit:'total',
+   sub: v => `A 10% deposit on a $${Math.round(v*10/1000)}k place, roughly.`},
+
+  {type:'number', key:'startingSavings', eyebrow:'The point of all this',
+   q:'How much have you got saved right now?',
+   help:'Moving out takes a chunk of this straight away for bond and furniture, so it matters where you\'re starting from.',
+   prefix:'$', unit:'saved',
+   sub: v => `Starting line.`},
+
+  {type:'summary'}
+];
+
+function WIZ_TOLL_OPTS(){
+  const n = S.shiftsPerWeek;
+  return [
+    {v:0, i:'○', t:'Never — take the free route', s:'Saves the money, costs you about 30 min a day'},
+    {v:Math.max(1,Math.round(n/2)), i:'◑', t:'Some days', s:'Toll when you\'re running late, free route otherwise'},
+    {v:n, i:'●', t:'Every shift', s:'Fastest and most predictable drive'}
+  ];
+}
+
+let wizIdx = 0;
+let wizTmp = {};
+let wizUnsure = {};
+
+function wizStart(){
+  wizIdx = 0; wizTmp = {}; wizUnsure = {};
+  document.getElementById('wiz').classList.add('on');
+  document.body.classList.add('wizopen');
+  wizRender();
+}
+function wizFinish(){
+  document.getElementById('wiz').classList.remove('on');
+  document.body.classList.remove('wizopen');
+  buildInputs(); buildFormulas(); render();
+  window.scrollTo(0,0);
+}
+
+function wizRender(){
+  const step = WIZ[wizIdx];
+  const total = WIZ.length - 1;
+  const pct = (wizIdx/total)*100;
+  const el = document.getElementById('wizBody');
+  const isFirst = wizIdx===0, isLast = wizIdx===WIZ.length-1;
+
+  document.getElementById('wizFill').style.width = pct+'%';
+  document.getElementById('wizCount').textContent = isFirst ? 'Before you start' : isLast ? 'All done' : `Question ${wizIdx} of ${total-1}`;
+
+  let body='', navNext='Next', navShow=true;
+
+  if(step.type==='welcome'){
+    body = `<div class="wiz-hero">
+      <h2>Let's work out what<br>moving out <em>actually costs.</em></h2>
+      <p>Ten quick questions. Nothing is right or wrong — they just set the starting numbers so the comparison means something for you rather than for an average person.</p>
+      <ul>
+        <li>Takes about <b>two minutes</b></li>
+        <li>You can change <b>every number</b> afterwards</li>
+        <li>Nothing is saved anywhere — <b>close the tab and it's gone</b></li>
+      </ul>
+      <p style="font-size:13.5px">This isn't here to talk you out of it. It's here so that whichever way you go, you go in knowing the numbers.</p>
+    </div>`;
+    navNext = 'Start';
+  }
+
+  else if(step.type==='choice'){
+    const opts = step.dyn ? step.dyn() : step.opts;
+    const cur = step.store===false ? wizTmp[step.key] : S[step.key];
+    body = `<div class="wiz-step">
+      <div class="wiz-eyebrow">${step.eyebrow}</div>
+      <div class="wiz-q">${step.q}</div>
+      <div class="wiz-help">${step.help}</div>
+      <div class="wiz-choices">
+        ${opts.map((o,i)=>`<button class="choice ${o.unsure?'unsure':''} ${cur===o.v && (!!wizUnsure[step.key])===(!!o.unsure)?'sel':''}" data-v="${o.v}" data-i="${i}">
+          <span class="ci">${o.i}</span><span class="ct"><b>${o.t}</b><small>${o.s}</small></span></button>`).join('')}
+      </div></div>`;
+  }
+
+  else if(step.type==='number'){
+    const v = S[step.key];
+    body = `<div class="wiz-step">
+      <div class="wiz-eyebrow">${step.eyebrow}</div>
+      <div class="wiz-q">${step.q}</div>
+      <div class="wiz-help">${step.help}</div>
+      <div class="wiz-num">
+        ${step.prefix?`<span class="dol">${step.prefix}</span>`:''}
+        <input type="number" id="wizNum" value="${v}" step="any" inputmode="decimal">
+        <span class="unit">${step.unit||''}</span>
+      </div>
+      <div class="wiz-sub" id="wizSub">${step.sub?step.sub(v):''}</div>
+    </div>`;
+  }
+
+  else if(step.type==='slider'){
+    const v = S[step.key];
+    body = `<div class="wiz-step">
+      <div class="wiz-eyebrow">${step.eyebrow}</div>
+      <div class="wiz-q">${step.q}</div>
+      <div class="wiz-help">${step.help}</div>
+      <div class="wiz-num"><span class="dol">${step.prefix||''}</span>
+        <input type="number" id="wizNum" value="${v}" step="${step.step}" inputmode="decimal">
+        <span class="unit">per week</span></div>
+      <div class="wiz-slider">
+        <input type="range" id="wizRange" min="${step.min}" max="${step.max}" step="${step.step}" value="${v}">
+        <div class="wiz-scale"><span>$${step.min}</span><span>$${step.max}+</span></div>
+      </div>
+      <div class="wiz-sub" id="wizSub">${step.sub?step.sub(v):''}</div>
+    </div>`;
+  }
+
+  else if(step.type==='summary'){
+    const c = compute();
+    const income = S.payAfterTax;
+    const EST = '<span class="est">estimated</span>';
+    const rows = [
+      ['Take-home pay', money(S.payAfterTax)+' /wk'],
+      ['Shifts a week', S.shiftsPerWeek + (wizUnsure.shiftsPerWeek?EST:'')],
+      ['Drive each way', S.minsEachWay+' min · '+S.kmEachWay+' km' + (wizUnsure.__shiftType?EST:'')],
+      ['Toll days', S.tollDaysPerWeek+' of '+S.shiftsPerWeek],
+      ['Board at home', money(S.boardRent)+' /wk'],
+      ['Own place rent', money(S.rentOwn)+' /wk'],
+      ['Share house rent', money(S.rentShare)+' /wk'],
+      ['Spending money', money(S.social)+' /wk'],
+      ['Saving towards', money(S.depositGoal)],
+      ['Already saved', money(S.startingSavings)]
+    ];
+    const nUnsure = Object.keys(wizUnsure).length;
+    const unsureNote = nUnsure ? `<div class="wiz-help" style="margin-bottom:14px;padding:12px 14px;background:var(--share-soft);border-radius:10px;color:#41508E">You weren't sure about ${nUnsure===1?'one thing':nUnsure+' things'}, so I've used a sensible middle estimate. They're marked <span class="est">estimated</span> below — worth coming back to change once you know.</div>` : '';
+    const cards = [
+      {k:'stay', n:'Stay at home', v:income-c.homeWeekly, s:'nothing up front'},
+      {k:'move', n:'Own place',    v:income-c.ownWeekly,  s:money(c.upfrontOwn)+' up front'},
+      {k:'share',n:'Share house',  v:income-c.shareWeekly,s:money(c.upfrontShare)+' up front'}
+    ];
+    body = `<div class="wiz-step">
+      <div class="wiz-eyebrow">Here's where that lands</div>
+      <div class="wiz-q">Money left over each week</div>
+      <div class="wiz-help">After rent, bills, food, fuel and everything else — this is what's yours to save.</div>
+      <div class="peek">
+        ${cards.map(x=>`<div class="p" data-k="${x.k}"><div class="n">${x.n}</div><div class="v">${money(x.v)}</div><div class="s">${x.s}</div></div>`).join('')}
+      </div>
+      <div class="wiz-help" style="margin-bottom:14px">The full dashboard breaks each of these down line by line, projects your savings over the next few years, and lets you change any number or formula you disagree with.</div>
+      ${unsureNote}
+      <details class="acc" style="margin-bottom:6px"><summary>What you told me</summary>
+        <div class="recap">${rows.map(r=>`<div class="r"><span class="l">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('')}</div>
+      </details>
+    </div>`;
+    navNext = 'Open the full dashboard';
+  }
+
+  el.innerHTML = body;
+
+  // nav
+  document.getElementById('wizBack').style.visibility = isFirst ? 'hidden':'visible';
+  document.getElementById('wizNext').textContent = navNext;
+
+  // bind
+  el.querySelectorAll('.choice').forEach(b=>{
+    b.onclick = ()=>{
+      let v = b.dataset.v;
+      const num = parseFloat(v);
+      const val = (!isNaN(num) && String(num)===v) ? num : v;
+      const opt = (step.dyn ? step.dyn() : step.opts)[parseInt(b.dataset.i,10)];
+      if(opt && opt.unsure) wizUnsure[step.key] = true; else delete wizUnsure[step.key];
+      if(step.store===false) wizTmp[step.key]=val; else S[step.key]=val;
+      if(step.apply) step.apply(val);
+      el.querySelectorAll('.choice').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      setTimeout(wizNext, 210);
+    };
+  });
+
+  const num = document.getElementById('wizNum');
+  if(num){
+    num.addEventListener('input', e=>{
+      const v = parseFloat(e.target.value);
+      S[step.key] = isFinite(v)?v:0;
+      const sub = document.getElementById('wizSub');
+      if(sub && step.sub) sub.innerHTML = step.sub(S[step.key]);
+      const rng = document.getElementById('wizRange');
+      if(rng) rng.value = S[step.key];
+    });
+    num.addEventListener('keydown', e=>{ if(e.key==='Enter') wizNext(); });
+    setTimeout(()=>{ num.focus(); num.select(); }, 60);
+  }
+  const rng = document.getElementById('wizRange');
+  if(rng){
+    rng.addEventListener('input', e=>{
+      S[step.key] = parseFloat(e.target.value);
+      document.getElementById('wizNum').value = S[step.key];
+      const sub = document.getElementById('wizSub');
+      if(sub && step.sub) sub.innerHTML = step.sub(S[step.key]);
+    });
+  }
+}
+
+function wizNext(){
+  if(wizIdx >= WIZ.length-1){ wizFinish(); return; }
+  wizIdx++; wizRender();
+  const _w=document.getElementById('wiz'); if(_w.scrollTo) _w.scrollTo(0,0);
+}
+function wizBack(){ if(wizIdx>0){ wizIdx--; wizRender(); const _w=document.getElementById('wiz'); if(_w.scrollTo) _w.scrollTo(0,0);} }
+
+
+/* ---- wizard wiring ---- */
+document.getElementById('wizNext').onclick = wizNext;
+document.getElementById('wizBack').onclick = wizBack;
+document.getElementById('wizSkip').onclick = wizFinish;
+document.getElementById('btnWizard').onclick = wizStart;
+document.addEventListener('keydown', e=>{
+  if(!document.getElementById('wiz').classList.contains('on')) return;
+  if(e.key==='Enter' && e.target.tagName!=='BUTTON'){ e.preventDefault(); wizNext(); }
+  if(e.key==='Escape'){ wizFinish(); }
+});
+
+boot();
+
+</script>
+</body>
+</html>
