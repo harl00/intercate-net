@@ -4,6 +4,7 @@ description: "You made a single-page HTML thing and it works when you double-cli
 pubDate: 2026-07-21
 tags: ["technology"]
 linkedinSnippet: "A beginner-friendly guide: how to take a single HTML file (the kind you get when you ask an AI to build you a little page) and publish it as a real, shareable web address for free using GitHub Pages. No coding, no command line."
+project: "publish-it-yourself"
 ---
 
 You have made something. Maybe you asked an AI to build you a little interactive page: a calculator, a chart, a quiz, a decision helper. It is sitting on your computer as a single `.html` file. It works when you double-click it, the browser opens, everything runs. But you cannot share it. "Here, email yourself this file" is not a link, and nobody else can open it in their browser.

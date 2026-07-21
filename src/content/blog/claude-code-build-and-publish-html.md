@@ -4,6 +4,7 @@ description: "You already publish HTML with GitHub Pages by dragging files into 
 pubDate: 2026-07-22
 tags: ["technology"]
 linkedinSnippet: "The follow-up to my GitHub Pages guide. Once your site is live, the next step is to stop uploading files by hand and start building pages on your own machine with Claude Code, then publishing them with a plain-English instruction. A beginner setup walkthrough for Windows and macOS, including the design skills worth turning on."
+project: "publish-it-yourself"
 ---
 
 In an earlier post I walked through [publishing a single HTML file with GitHub Pages](/blog/publish-html-with-github-pages/). That guide stayed entirely in the browser: no command line, no coding, just dragging a file into a web page and flipping a switch. If you followed it, you now have a real web address and a repository (a "repo") that holds your pages.
@@ -165,6 +166,27 @@ claude
 ```
 
 On first run it opens your browser to log in. Sign in with your paid Claude account, approve, and you are inside Claude Code in your repo.
+
+---
+
+## The one habit worth forming: always start Claude Code inside your project folder
+
+Before the fun part, one idea that matters more than it looks. Notice that in both walkthroughs above you `cd` into your repo folder *before* running `claude`. That is not a detail. The folder you launch Claude Code from becomes its **project root**, and that root is the boundary of what it works on.
+
+Here is why that boundary is worth caring about. Claude Code reads files, writes files, and runs commands. It scopes all of that to the folder you started it in and everything beneath it. Start it at the root of your repo, and its whole world is that one project. It can see your pages, edit them, and publish them, and nothing outside that folder is in play.
+
+Now picture starting it somewhere broad instead, like your home folder, or worse, the top of your `C:` drive. You have just handed the whole of your personal file tree to it as the "project". Three things get worse at once:
+
+- **Privacy.** Far more of your private files are now in view than you meant to share with anything.
+- **Blast radius.** If a command does something you did not expect, it can now reach much more than one small project's worth of files.
+- **The permission prompt means less.** Claude Code asks before it does things, but a "yes" is only as safe as the folder it is confined to. A tight folder makes that "yes" easy to give with confidence.
+
+A tidy project folder is the simplest safety boundary you have. It costs nothing and it keeps the tool pointed at exactly the work in front of you.
+
+Two practical notes:
+
+- When Claude Code starts, it prints the working directory at the top. Glance at it. If that is not your repo, quit (`/exit`), `cd` into the right folder, and start again.
+- On native Windows there is no separate operating-system sandbox around Claude Code, so this "start it in the right folder" habit is doing more of the work. On macOS and Linux the picture is similar for a beginner setup. Either way, the rule is the same: one project, one folder, start it there.
 
 ---
 
