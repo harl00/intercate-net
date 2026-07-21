@@ -983,13 +983,46 @@ const WIZ = [
    q:'What rent are you seeing for a place of your own?',
    help:'Look up a couple of real listings in Redland Bay, Victoria Point or Thornlands and put the middle one here. Around $460–$520 is typical for a one-bedder.',
    prefix:'$', unit:'per week',
-   sub: v => `Bond and two weeks up front would be about <b>$${Math.round(v*6).toLocaleString('en-AU')}</b>, before any furniture.`},
+   sub: v => `Bond and two weeks up front would be about <b>$${Math.round(v*6).toLocaleString('en-AU')}</b>. Furniture comes next.`},
 
   {type:'number', key:'rentShare', eyebrow:'Moving out',
    q:'And a room in a share house?',
    help:'Your share only. Rooms around Redland Bay tend to run $230–$300 depending on whether bills are included.',
    prefix:'$', unit:'per week',
    sub: v => `Over a year that\'s <b>$${Math.round(v*52).toLocaleString('en-AU')}</b> in rent.`},
+
+  {type:'choice', key:'__furniture', eyebrow:'Moving out', store:false,
+   q:'Have you got furniture, or would you be starting from scratch?',
+   help:'This is the part people underestimate. A bed, fridge and washing machine on their own can run past $2,000 before you\'ve bought a single plate.',
+   opts:[
+     {v:'furnished', i:'▣', t:'The place comes furnished', s:'Common in share houses — you\'d just bring your things. Around $400 for the odds and ends'},
+     {v:'have',  i:'◪', t:'I\'ve got most of it already', s:'Bed and some furniture come with you. Around $900 for the gaps and moving it'},
+     {v:'some',  i:'◫', t:'I\'ve got a bed, not much else', s:'Fridge, washer, couch, table still to buy. Around $2,500'},
+     {v:'none',  i:'□', t:'Starting from nothing', s:'Everything from the bed up, plus a removalist. Around $4,200'},
+     {v:'unsure',  i:'?', t:'I don\'t know yet', s:'We\'ll assume you have a bed and buy the rest — about $2,500', unsure:true}
+   ],
+   apply: (v) => {
+     const own   = {furnished:400, have:900, some:2500, none:4200, unsure:2500}[v];
+     const share = {furnished:250, have:600, some:900,  none:1500, unsure:900}[v];
+     S.moveInCost = own; S.shareMoveIn = share;
+   }},
+
+  {type:'choice', key:'__billsIncluded', eyebrow:'Moving out', store:false,
+   q:'Would power, water and internet be included in the rent?',
+   help:'Share houses often bundle bills into one weekly figure. A place of your own almost never does — every account is in your name.',
+   opts:[
+     {v:'none', i:'○', t:'No, all separate', s:'You set up and pay each account yourself — the usual for a unit'},
+     {v:'water', i:'◔', t:'Water only', s:'Very common in Queensland rentals — the landlord covers water'},
+     {v:'most', i:'◑', t:'Power, water and internet included', s:'Typical of a room in a share house with one weekly rate'},
+     {v:'all', i:'●', t:'Everything included', s:'Fully bundled — rent is the only bill you see'},
+     {v:'unsure', i:'?', t:'I don\'t know yet', s:'We\'ll assume water is covered and the rest isn\'t — the most common setup', unsure:true}
+   ],
+   apply: (v) => {
+     const D = {electricity:38, water:12, internet:22};
+     if(v==='none'){ S.electricity=D.electricity; S.water=D.water; S.internet=D.internet; S.shareBills=55; }
+     if(v==='water'||v==='unsure'){ S.electricity=D.electricity; S.water=0; S.internet=D.internet; S.shareBills=45; }
+     if(v==='most'||v==='all'){ S.electricity=0; S.water=0; S.internet=0; S.shareBills=0; }
+   }},
 
   {type:'slider', key:'social', eyebrow:'Your life',
    q:'How much do you spend on yourself in a week?',
@@ -1053,7 +1086,7 @@ function wizRender(){
   if(step.type==='welcome'){
     body = `<div class="wiz-hero">
       <h2>Let's work out what<br>moving out <em>actually costs.</em></h2>
-      <p>Ten quick questions. Nothing is right or wrong — they just set the starting numbers so the comparison means something for you rather than for an average person.</p>
+      <p>A handful of quick questions. Nothing is right or wrong — they just set the starting numbers so the comparison means something for you rather than for an average person.</p>
       <ul>
         <li>Takes about <b>two minutes</b></li>
         <li>You can change <b>every number</b> afterwards</li>
@@ -1121,6 +1154,8 @@ function wizRender(){
       ['Board at home', money(S.boardRent)+' /wk'],
       ['Own place rent', money(S.rentOwn)+' /wk'],
       ['Share house rent', money(S.rentShare)+' /wk'],
+      ['Setting up a place', money(S.moveInCost)+' one-off' + (wizUnsure.__furniture?EST:'')],
+      ['Power, water, internet', (S.electricity+S.water+S.internet)===0 ? 'included in rent' : money(S.electricity+S.water+S.internet)+' /wk' + (wizUnsure.__billsIncluded?EST:'')],
       ['Spending money', money(S.social)+' /wk'],
       ['Saving towards', money(S.depositGoal)],
       ['Already saved', money(S.startingSavings)]
