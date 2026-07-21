@@ -292,7 +292,10 @@ nav {
   overflow-x: auto;
   margin: 1.5rem 0;
 }
-.prose pre code { background: none; border: none; padding: 0; color: var(--text-primary); }
+/* Shiki emits an inline github-dark background on <pre>, so code text must stay
+   light in both site themes. Syntax-highlighted tokens carry their own inline
+   colours; this only sets the fallback for plain (unhighlighted) text. */
+.prose pre code { background: none; border: none; padding: 0; color: #e1e4e8; }
 
 .prose a { border-bottom: 1px solid rgba(200, 169, 110, 0.3); }
 .prose a:hover { border-bottom-color: var(--accent); }
