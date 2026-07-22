@@ -166,5 +166,65 @@ const currentPath = Astro.url.pathname;
       </div>
     </div>
   </footer>
+
+  <!-- Copy button for code blocks in article prose -->
+  <script is:inline>
+    (function () {
+      function addCopyButtons() {
+        var blocks = document.querySelectorAll('.prose pre');
+        for (var i = 0; i < blocks.length; i++) {
+          (function (pre) {
+            if (pre.parentElement && pre.parentElement.classList.contains('code-wrap')) return;
+            var code = pre.querySelector('code');
+            if (!code) return;
+
+            var wrap = document.createElement('div');
+            wrap.className = 'code-wrap';
+            pre.parentNode.insertBefore(wrap, pre);
+            wrap.appendChild(pre);
+
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'copy-code-btn';
+            btn.setAttribute('aria-label', 'Copy code to clipboard');
+            btn.textContent = 'Copy';
+            wrap.appendChild(btn);
+
+            btn.addEventListener('click', function () {
+              var text = code.textContent || '';
+              function done(ok) {
+                btn.textContent = ok ? 'Copied' : 'Failed';
+                if (ok) btn.classList.add('copied');
+                setTimeout(function () {
+                  btn.textContent = 'Copy';
+                  btn.classList.remove('copied');
+                }, 1800);
+              }
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+              } else {
+                try {
+                  var ta = document.createElement('textarea');
+                  ta.value = text;
+                  ta.style.position = 'fixed';
+                  ta.style.opacity = '0';
+                  document.body.appendChild(ta);
+                  ta.select();
+                  document.execCommand('copy');
+                  document.body.removeChild(ta);
+                  done(true);
+                } catch (e) { done(false); }
+              }
+            });
+          })(blocks[i]);
+        }
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', addCopyButtons);
+      } else {
+        addCopyButtons();
+      }
+    })();
+  </script>
 </body>
 </html>
