@@ -1,51 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-  --bg: #fbfaf7;
-  --bg-surface: #f4f2ec;
-  --bg-elevated: #ede9df;
-  --border: #d4cfc4;
-  --border-subtle: #e8e4da;
-  --text-primary: #1a1814;
-  --text-secondary: #4a453e;
-  --text-muted: #8a8078;
-  --accent: #8b2e23;
-  --accent-hover: #a33928;
-  --accent-dim: rgba(139, 46, 35, 0.08);
-  --accent-border: rgba(139, 46, 35, 0.3);
-  --nav-bg: rgba(251, 250, 247, 0.92);
+  --bg: #F5F5F3;
+  --bg-surface: #ECECEA;
+  --bg-elevated: #E4E4E1;
+  --border: #D8D8D4;
+  --border-subtle: #E7E7E4;
+  --text-primary: #1A1D24;
+  --text-secondary: #474C55;
+  --text-muted: #7A828E;
+  --accent: #3B4A63;
+  --accent-hover: #2C3850;
+  --accent-dim: rgba(59, 74, 99, 0.08);
+  --accent-border: rgba(59, 74, 99, 0.28);
+  --nav-bg: rgba(245, 245, 243, 0.82);
 
-  /* tag colours */
+  /* tag colours — muted, for wayfinding */
   --tag-ai-government: #2d5c52;
   --tag-university: #3a4f88;
   --tag-tuvalu: #5a4f80;
   --tag-technology: #4a6a3a;
   --tag-essay: #6a4a3a;
 
-  --font-display: 'DM Serif Display', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Newsreader', Georgia, serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SF Mono', monospace;
 
   --max-content: 720px;
-  --max-wide: 1100px;
+  --max-wide: 1080px;
 
-  --radius: 4px;
+  --radius: 3px;
   --transition: 180ms ease;
 }
 
 html[data-theme="dark"] {
-  --bg: #0f0f0f;
-  --bg-surface: #161616;
-  --bg-elevated: #1e1e1e;
-  --border: #2a2a2a;
-  --border-subtle: #1e1e1e;
-  --text-primary: #f0ede8;
-  --text-secondary: #8a8580;
-  --text-muted: #555;
-  --accent: #c8a96e;
-  --accent-hover: #dfc08a;
-  --accent-dim: rgba(200, 169, 110, 0.12);
-  --accent-border: rgba(200, 169, 110, 0.3);
-  --nav-bg: rgba(15, 15, 15, 0.92);
+  --bg: #101216;
+  --bg-surface: #171A1F;
+  --bg-elevated: #1E2229;
+  --border: #2A2F37;
+  --border-subtle: #1E2229;
+  --text-primary: #ECEDEF;
+  --text-secondary: #9BA2AD;
+  --text-muted: #6E7681;
+  --accent: #8593AB;
+  --accent-hover: #A4B0C4;
+  --accent-dim: rgba(133, 147, 171, 0.14);
+  --accent-border: rgba(133, 147, 171, 0.3);
+  --nav-bg: rgba(16, 18, 22, 0.82);
   --tag-ai-government: #4a7c6f;
   --tag-university: #5a6fa8;
   --tag-tuvalu: #7a6fa0;
@@ -59,13 +60,14 @@ html {
   font-size: 17px;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   background: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.7;
   min-height: 100vh;
 }
@@ -73,12 +75,13 @@ body {
 /* ── Typography ── */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 1.2;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
-h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); }
+h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); }
 h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
 h3 { font-size: 1.3rem; }
 
@@ -111,8 +114,8 @@ nav {
   top: 0;
   z-index: 100;
   background: var(--nav-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .nav-inner {
@@ -122,29 +125,31 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
+  height: 64px;
 }
 
 .nav-brand {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-weight: 700;
+  font-size: 1.2rem;
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
 }
-.nav-brand:hover { color: var(--accent); }
+.nav-brand .brand-i { color: var(--accent); }
+.nav-brand:hover { color: var(--text-primary); }
 
 .nav-links {
   display: flex;
-  gap: 2rem;
+  gap: 1.7rem;
   list-style: none;
 }
 
 .nav-links a {
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: var(--text-secondary);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
   transition: color var(--transition);
 }
 .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
@@ -158,8 +163,8 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   transition: color var(--transition), border-color var(--transition);
   flex-shrink: 0;
@@ -173,20 +178,20 @@ nav {
 /* ── Tags ── */
 .tag {
   display: inline-block;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.2em 0.7em;
-  border-radius: 2px;
-  color: var(--text-primary);
+  letter-spacing: 0.01em;
+  padding: 0.2em 0.65em;
+  border-radius: 3px;
+  color: var(--text-secondary);
 }
 
-.tag-ai-government { background: rgba(74, 124, 111, 0.25); border: 1px solid rgba(74, 124, 111, 0.4); }
-.tag-university     { background: rgba(90, 111, 168, 0.25); border: 1px solid rgba(90, 111, 168, 0.4); }
-.tag-tuvalu         { background: rgba(122, 111, 160, 0.25); border: 1px solid rgba(122, 111, 160, 0.4); }
-.tag-technology     { background: rgba(106, 138, 90, 0.25); border: 1px solid rgba(106, 138, 90, 0.4); }
-.tag-essay          { background: rgba(138, 106, 90, 0.25); border: 1px solid rgba(138, 106, 90, 0.4); }
+.tag-ai-government { background: rgba(74, 124, 111, 0.18); }
+.tag-university     { background: rgba(90, 111, 168, 0.18); }
+.tag-tuvalu         { background: rgba(122, 111, 160, 0.18); }
+.tag-technology     { background: rgba(106, 138, 90, 0.18); }
+.tag-essay          { background: rgba(138, 106, 90, 0.18); }
 
 /* ── Post cards ── */
 .post-card {
@@ -205,13 +210,14 @@ nav {
 }
 
 .post-card-date {
-  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--text-muted);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .post-card h2 {
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
   line-height: 1.25;
 }
 
@@ -223,41 +229,40 @@ nav {
 
 .post-card-desc {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.6;
-  max-width: 60ch;
+  max-width: 62ch;
 }
 
 .read-more {
-  font-size: 0.82rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--accent);
-  opacity: 0.75;
+  opacity: 0.8;
   transition: opacity var(--transition);
 }
 .post-card:hover .read-more { opacity: 1; }
 
 /* ── Article prose ── */
 .prose {
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-size: 1.08rem;
+  line-height: 1.75;
 }
 
 .prose h2 {
-  margin: 2.5rem 0 1rem;
-  font-size: 1.6rem;
+  margin: 2.75rem 0 1rem;
+  font-size: 1.55rem;
   color: var(--text-primary);
 }
 
 .prose h3 {
   margin: 2rem 0 0.75rem;
-  font-size: 1.2rem;
+  font-size: 1.22rem;
 }
 
 .prose p { margin-bottom: 1.4rem; color: var(--text-secondary); }
-.prose p:first-of-type { color: var(--text-primary); font-size: 1.1rem; }
+.prose p:first-of-type { color: var(--text-primary); font-size: 1.15rem; }
 
 .prose ul, .prose ol {
   margin: 1rem 0 1.4rem 1.5rem;
@@ -275,8 +280,8 @@ nav {
 .prose blockquote p { color: var(--text-primary); font-style: italic; margin: 0; }
 
 .prose code {
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 0.88em;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   padding: 0.15em 0.4em;
@@ -297,7 +302,7 @@ nav {
    colours; this only sets the fallback for plain (unhighlighted) text. */
 .prose pre code { background: none; border: none; padding: 0; color: #e1e4e8; }
 
-.prose a { border-bottom: 1px solid rgba(200, 169, 110, 0.3); }
+.prose a { border-bottom: 1px solid var(--accent-border); }
 .prose a:hover { border-bottom-color: var(--accent); }
 
 .prose hr {
@@ -323,11 +328,7 @@ nav {
   margin-top: 0.7rem;
 }
 
-/* ── Breakout media ──
-   Let an image/figure extend wider than the 720px reading column,
-   centred in the viewport, up to --max-wide. Add class="breakout"
-   (e.g. <figure class="breakout">…</figure>). Relies on the prose
-   column being centred, which it is via .content-container. */
+/* ── Breakout media ── */
 .prose .breakout {
   width: min(var(--max-wide), calc(100vw - 2 * clamp(1.25rem, 4vw, 3rem)));
   margin-left: 50%;
@@ -335,7 +336,6 @@ nav {
   max-width: none;
 }
 
-/* Edge-to-edge variant. Add class="full-bleed". */
 .prose .full-bleed {
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -364,8 +364,8 @@ footer {
 
 .footer-disclaimer {
   margin: 0;
-  max-width: 70ch;
-  font-size: 0.8rem;
+  max-width: 72ch;
+  font-size: 0.85rem;
   line-height: 1.65;
   color: var(--text-secondary);
   padding: 1rem 1.25rem;
@@ -384,25 +384,38 @@ footer {
   flex-wrap: wrap;
   gap: 1rem;
 }
+.footer-meta > span { font-family: var(--font-display); font-size: 0.8rem; }
+.footer-meta .brand-i { color: var(--accent); }
 
 .footer-links { display: flex; gap: 1.5rem; }
-.footer-links a { color: var(--text-muted); font-size: 0.85rem; }
-.footer-links a:hover { color: var(--text-secondary); }
+.footer-links a { font-family: var(--font-display); color: var(--text-muted); font-size: 0.8rem; }
+.footer-links a:hover { color: var(--accent); }
 
 /* ── Utilities ── */
 .divider {
-  width: 40px;
+  width: 36px;
   height: 2px;
   background: var(--accent);
   margin: 1.5rem 0;
 }
 
+/* Small eyebrow label with a connective accent tick. */
 .section-label {
-  font-size: 0.75rem;
+  font-family: var(--font-display);
   font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
   color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.section-label::before {
+  content: "";
+  width: 1.6rem;
+  height: 1px;
+  background: var(--accent);
+  flex-shrink: 0;
 }
 
 /* ── Animations ── */
@@ -420,6 +433,11 @@ footer {
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-in { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
 /* ── LinkedIn share button ── */
 .linkedin-share {
   display: inline-flex;
@@ -427,6 +445,7 @@ footer {
   gap: 0.5rem;
   background: #0a66c2;
   color: white;
+  font-family: var(--font-display);
   font-size: 0.82rem;
   font-weight: 500;
   padding: 0.5rem 1rem;
@@ -448,22 +467,25 @@ footer {
 }
 
 .filter-btn {
-  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.35em 0.9em;
-  border-radius: 2px;
+  letter-spacing: 0.01em;
+  padding: 0.4em 0.95em;
+  border-radius: 3px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all var(--transition);
+  transition: border-color var(--transition), color var(--transition);
 }
 .filter-btn:hover, .filter-btn.active {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* ── Focus ── */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
 /* ── Responsive ── */
 @media (max-width: 640px) {
