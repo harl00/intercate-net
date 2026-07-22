@@ -1,0 +1,557 @@
+<div id="app"></div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+#app {
+  /* cool slate-blue neutral scale */
+  --n-0: oklch(99% 0.003 250);
+  --n-50: oklch(96.5% 0.004 250);
+  --n-100: oklch(93% 0.006 250);
+  --n-200: oklch(88% 0.008 250);
+  --n-300: oklch(78% 0.010 250);
+  --n-400: oklch(64% 0.012 250);
+  --n-500: oklch(52% 0.014 250);
+  --n-600: oklch(40% 0.016 250);
+  --n-700: oklch(30% 0.018 250);
+  --n-800: oklch(22% 0.02 250);
+  --n-900: oklch(16% 0.02 250);
+
+  --accent-slate: oklch(38% 0.05 250);
+  --accent-slate-strong: oklch(30% 0.055 250);
+  --accent-slate-soft: oklch(93% 0.012 250);
+  --accent-slate2: oklch(60% 0.035 250);
+  --accent-slate2-strong: oklch(48% 0.04 250);
+  --accent-slate2-soft: oklch(94% 0.01 250);
+
+  --success: oklch(52% 0.11 145);
+  --success-soft: oklch(95% 0.03 145);
+  --warning: oklch(68% 0.13 80);
+  --warning-strong: oklch(48% 0.11 80);
+  --warning-soft: oklch(95% 0.04 80);
+  --danger: oklch(54% 0.16 25);
+  --danger-soft: oklch(95% 0.03 25);
+
+  --bg: var(--n-50);
+  --bg-raised: var(--n-0);
+  --surface-card: var(--n-0);
+  --ink: var(--n-800);
+  --ink-soft: var(--n-500);
+  --ink-faint: var(--n-300);
+  --ink-inverse: var(--n-50);
+  --border: var(--n-200);
+  --border-strong: var(--n-300);
+  --brand: var(--accent-slate);
+  --brand-strong: var(--accent-slate-strong);
+  --brand-soft: var(--accent-slate-soft);
+
+  --font-display: 'Sora', -apple-system, sans-serif;
+  --font-body: 'Source Serif 4', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
+
+  --text-xs: 13px; --text-sm: 15px; --text-base: 17px; --text-lg: 20px;
+  --text-xl: 26px; --text-2xl: 34px; --text-3xl: 46px; --text-4xl: 64px;
+  --leading-tight: 1.1; --leading-snug: 1.3; --leading-normal: 1.55;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
+  --tracking-tight: -0.01em; --tracking-wide: 0.05em;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
+  --content-max: 760px; --page-max: 1200px;
+
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 6px; --radius-pill: 999px;
+  --border-width: 1px;
+  --ease-standard: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --duration-fast: 120ms; --duration-normal: 200ms;
+
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+#app * { box-sizing: border-box; }
+.wrap { max-width: var(--page-max); margin: 0 auto; padding: var(--space-7) var(--space-6) var(--space-9); }
+
+/* ── Masthead ── */
+.masthead { border-bottom: 1px solid var(--border); padding-bottom: var(--space-6); }
+.eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-4); }
+.eyebrow-rule { width: 16px; height: 1px; background: var(--ink-faint); flex: none; }
+.eyebrow-txt { font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-wide); color: var(--ink-soft); }
+.masthead h1 {
+  font-family: var(--font-display); font-size: var(--text-3xl); font-weight: var(--weight-bold);
+  line-height: var(--leading-tight); letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-4); max-width: 20ch; color: var(--ink);
+}
+.standfirst {
+  font-family: var(--font-body); font-size: var(--text-lg); line-height: var(--leading-normal);
+  color: var(--ink); margin: 0; max-width: 620px;
+}
+.byline { font-family: var(--font-body); font-style: italic; color: var(--ink-soft); font-size: var(--text-sm); margin-top: var(--space-3); }
+
+/* ── Nav ── */
+.nav { display: flex; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.nav button {
+  font-family: var(--font-display); font-size: var(--text-sm); font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight); background: transparent; border: none;
+  border-bottom: 2px solid transparent; color: var(--ink-soft);
+  padding: var(--space-4) var(--space-5) var(--space-3); cursor: pointer; margin-bottom: -1px;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.nav button:hover { color: var(--ink); }
+.nav button:focus-visible { outline: 1px solid var(--brand); outline-offset: -2px; }
+.nav button[aria-selected="true"] { color: var(--brand); border-bottom-color: var(--brand); }
+
+.pane { padding-top: var(--space-2); }
+.sec-label { display: flex; align-items: center; gap: 10px; margin: var(--space-7) 0 var(--space-5); }
+.sec-label .r { width: 16px; height: 1px; background: var(--ink-faint); flex: none; }
+.sec-label .x { font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-wide); color: var(--ink-soft); }
+
+.lede { font-family: var(--font-body); font-size: var(--text-base); line-height: var(--leading-normal); color: var(--ink); max-width: 660px; margin: 0 0 var(--space-5); }
+.body-text { font-family: var(--font-body); font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--ink-soft); max-width: 680px; }
+.body-text p { margin: 0 0 var(--space-3); }
+.body-text p:last-child { margin-bottom: 0; }
+.body-text em { font-style: italic; }
+
+svg .t { font-family: var(--font-body); font-size: 14px; fill: var(--ink-soft); }
+svg .tm { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; fill: var(--ink-soft); }
+svg .th { font-family: var(--font-display); font-size: 14px; font-weight: 600; fill: var(--ink); }
+
+/* ── Cards ── */
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4); }
+.strat {
+  background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: var(--space-5); cursor: pointer; text-align: left; width: 100%;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.strat:hover { border-color: var(--border-strong); }
+.strat:focus-visible { outline: 1px solid var(--brand); outline-offset: 2px; }
+.strat[aria-pressed="true"] { border-color: var(--brand); box-shadow: inset 2px 0 0 var(--brand); }
+.strat-n { font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-wide); color: var(--ink-soft); display: block; margin-bottom: var(--space-2); }
+.strat-t { font-family: var(--font-display); font-weight: var(--weight-semibold); font-size: var(--text-lg); line-height: var(--leading-snug); letter-spacing: var(--tracking-tight); display: block; margin-bottom: 6px; color: var(--ink); }
+.strat-s { font-family: var(--font-body); font-size: var(--text-sm); color: var(--ink-soft); line-height: var(--leading-normal); display: block; margin-bottom: var(--space-4); }
+
+.badge {
+  font-family: var(--font-mono); font-size: 12px; font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide); padding: 3px 9px; border-radius: var(--radius-sm);
+  white-space: nowrap; display: inline-block;
+}
+.badge.b-go { background: var(--success-soft); color: var(--success); }
+.badge.b-stop { background: var(--danger-soft); color: var(--danger); }
+.badge.b-hold { background: var(--warning-soft); color: var(--warning-strong); }
+.badge.b-dead { background: var(--n-100); color: var(--ink-soft); }
+
+.detail-panel { margin-top: var(--space-6); border-top: 1px solid var(--border-strong); padding-top: var(--space-5); }
+.dp-h { font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); line-height: var(--leading-snug); margin: 0 0 6px; }
+.dp-sub { font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-wide); color: var(--ink-soft); margin-bottom: var(--space-5); }
+.dp-body { font-family: var(--font-body); font-size: var(--text-base); line-height: var(--leading-normal); color: var(--ink); max-width: 680px; margin-bottom: var(--space-6); }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-6); }
+.col-h { font-family: var(--font-display); font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); color: var(--ink-soft); border-bottom: 1px solid var(--border-strong); padding-bottom: 10px; margin-bottom: var(--space-4); }
+.pt { display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-family: var(--font-body); font-size: var(--text-sm); color: var(--ink-soft); line-height: var(--leading-normal); margin-bottom: var(--space-3); }
+.pt-m { font-family: var(--font-mono); font-size: 13px; padding-top: 1px; }
+.pt-m.plus { color: var(--success); }
+.pt-m.minus { color: var(--danger); }
+
+.verdict { padding: var(--space-5); border-radius: var(--radius-md); background: var(--n-100); border-left: 2px solid var(--accent-slate); }
+.verdict.is-go { border-left-color: var(--success); }
+.verdict.is-stop { border-left-color: var(--danger); }
+.verdict.is-hold { border-left-color: var(--warning); }
+.verdict-h { font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-wide); color: var(--ink-soft); margin-bottom: var(--space-2); }
+.verdict-b { font-family: var(--font-body); font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--ink); }
+
+.scenarios { display: grid; grid-template-columns: repeat(auto-fit, minmax(186px, 1fr)); gap: var(--space-3); }
+.scn {
+  background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: var(--space-4); cursor: pointer; text-align: left;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.scn:hover { border-color: var(--border-strong); }
+.scn:focus-visible { outline: 1px solid var(--brand); outline-offset: 2px; }
+.scn[aria-pressed="true"] { border-color: var(--brand); box-shadow: inset 2px 0 0 var(--brand); }
+.scn-n { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); letter-spacing: var(--tracking-wide); display: block; margin-bottom: 6px; }
+.scn-t { font-family: var(--font-display); font-weight: var(--weight-semibold); font-size: var(--text-base); display: block; margin-bottom: 4px; color: var(--ink); }
+.scn-s { font-family: var(--font-body); font-size: var(--text-sm); color: var(--ink-soft); line-height: var(--leading-normal); }
+
+/* ── Chain ── */
+.chain { margin-top: var(--space-5); }
+.hop { display: grid; grid-template-columns: 24px 1fr; gap: var(--space-4); }
+.rail { display: flex; flex-direction: column; align-items: center; }
+.dot { width: 9px; height: 9px; border-radius: var(--radius-pill); margin-top: 22px; border: 1px solid var(--ink-faint); background: var(--bg); flex: none; }
+.hop.s-go .dot { background: var(--success); border-color: var(--success); }
+.hop.s-stop .dot { background: var(--danger); border-color: var(--danger); }
+.hop.s-hold .dot { background: var(--warning); border-color: var(--warning); }
+.hop.s-dead .dot { background: var(--bg); border-color: var(--border-strong); }
+.stem { width: 1px; flex: 1; background: var(--border-strong); margin-top: 5px; }
+.hop.s-go .stem { background: var(--success); opacity: .4; }
+.hop:last-child .stem { display: none; }
+
+.card {
+  background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5); margin-bottom: var(--space-3); cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.card:hover { border-color: var(--border-strong); }
+.card:focus-visible { outline: 1px solid var(--brand); outline-offset: 2px; }
+.hop.s-dead .card { opacity: .55; }
+.card-top { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+.hop-n { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); letter-spacing: var(--tracking-wide); }
+.hop-t { font-family: var(--font-display); font-weight: var(--weight-semibold); font-size: var(--text-base); flex: 1; min-width: 180px; color: var(--ink); }
+.card-s { font-family: var(--font-body); font-size: var(--text-sm); color: var(--ink-soft); margin-top: 6px; line-height: var(--leading-normal); }
+.expand-hint { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); margin-top: 10px; letter-spacing: var(--tracking-wide); }
+.detail { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border); display: none; }
+.card.open .detail { display: block; }
+.drow { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-2) var(--space-4); font-family: var(--font-body); font-size: var(--text-sm); margin-bottom: var(--space-3); align-items: start; }
+.dk { font-family: var(--font-display); font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); color: var(--ink-soft); padding-top: 2px; }
+.dv { color: var(--ink-soft); line-height: var(--leading-normal); }
+
+.consid { border-top: 1px solid var(--border); padding: var(--space-5) 0; }
+.consid-top { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; margin-bottom: 10px; }
+.consid-h { font-family: var(--font-display); font-weight: var(--weight-semibold); font-size: var(--text-base); flex: 1; min-width: 200px; color: var(--ink); }
+
+/* ── Glossary ── */
+.gl { border-bottom: 1px dotted var(--accent-slate2); cursor: help; position: relative; color: var(--ink); }
+.gl:focus-visible { outline: 1px solid var(--brand); outline-offset: 2px; }
+.gl .tip {
+  visibility: hidden; opacity: 0; position: absolute; bottom: calc(100% + 10px); left: 0;
+  width: 300px; background: var(--n-800); color: var(--n-50); padding: var(--space-4);
+  border-radius: var(--radius-md); font-family: var(--font-body); font-size: var(--text-xs);
+  line-height: var(--leading-normal); z-index: 60; pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+  box-shadow: 0 4px 16px oklch(20% 0.01 250 / 0.18);
+  letter-spacing: normal; font-weight: var(--weight-regular);
+}
+.gl:hover .tip, .gl:focus .tip, .gl:focus-within .tip { visibility: visible; opacity: 1; }
+.tip b {
+  display: block; margin-bottom: 6px; font-family: var(--font-mono); font-size: 11px;
+  font-weight: var(--weight-medium); letter-spacing: var(--tracking-wide); color: var(--n-0);
+}
+.tip cite { display: block; margin-top: var(--space-2); font-style: italic; font-size: 12px; color: var(--n-400); }
+
+/* ── Sources table ── */
+.reftable { width: 100%; border-collapse: collapse; font-family: var(--font-body); font-size: var(--text-sm); }
+.reftable th {
+  text-align: left; padding: 10px 12px; font-family: var(--font-display); font-size: var(--text-xs);
+  font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); color: var(--ink-soft);
+  border-bottom: 1px solid var(--border-strong);
+}
+.reftable td { padding: var(--space-3); border-bottom: 1px solid var(--border); color: var(--ink-soft); vertical-align: top; line-height: var(--leading-normal); }
+.reftable td.num { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); width: 40px; }
+.reftable a { color: var(--brand); text-decoration: none; border-bottom: 1px solid var(--accent-slate-soft); }
+.reftable a:hover { border-bottom-color: var(--brand); }
+.reftable em { font-style: italic; }
+
+.pullquote {
+  margin-top: var(--space-6); background: var(--n-100); border-left: 2px solid var(--accent-slate);
+  padding: var(--space-5); font-family: var(--font-body); font-style: italic;
+  color: var(--ink-soft); font-size: var(--text-sm); line-height: var(--leading-normal);
+}
+
+.stats { display: flex; gap: var(--space-7); flex-wrap: wrap; margin-bottom: var(--space-5); }
+.stat-n { font-family: var(--font-display); font-weight: var(--weight-bold); font-size: var(--text-2xl); color: var(--accent-slate); letter-spacing: var(--tracking-tight); line-height: 1.1; }
+.stat-l { font-family: var(--font-body); font-size: var(--text-sm); color: var(--ink-soft); }
+
+@media (max-width: 680px) {
+  .wrap { padding: var(--space-5) var(--space-4) var(--space-8); }
+  .masthead h1 { font-size: var(--text-xl); }
+  .standfirst { font-size: var(--text-base); }
+  .drow { grid-template-columns: 1fr; gap: 2px 0; margin-bottom: var(--space-4); }
+  .gl .tip { width: 240px; }
+  .nav button { padding: var(--space-3); font-size: var(--text-xs); }
+  .hop { grid-template-columns: 18px 1fr; gap: var(--space-3); }
+}
+@media (prefers-reduced-motion: reduce) { #app *, #app *::before { transition: none !important; } }
+</style>
+
+<script>
+(function () {
+  const G = {
+    ihi: ['Individual Healthcare Identifier', 'A 16-digit number identifying a healthcare recipient under the Healthcare Identifiers Act 2010. Issued automatically to everyone enrolled in Medicare or with DVA. Distinct from a Medicare number — a person may hold several Medicare numbers over a lifetime but only one IHI.', 'Dept of Health / OAIC'],
+    hiservice: ['HI Service', 'The Healthcare Identifiers Service, operated by Services Australia. Holds the register of IHIs, HPI-Is and HPI-Os, and logs every access to an identifier.', 'Services Australia'],
+    hpio: ['HPI-O', 'Healthcare Provider Identifier – Organisation. Identifies a provider organisation. An organisation must hold one to use the HI Service; registering a seed organisation also registers it for My Health Record.', 'Services Australia'],
+    hpii: ['HPI-I', 'Healthcare Provider Identifier – Individual. Assigned automatically to all Ahpra-registered practitioners, including registered paramedics, and linked to the organisation\'s HPI-O to access records on its behalf.', 'Services Australia'],
+    s64: ['Section 64, My Health Records Act 2012', 'The break-glass provision. Permits collection, use or disclosure of My Health Record information where a provider reasonably believes it necessary to lessen or prevent a serious threat to life, health or safety and consent cannot reasonably be obtained — or to prevent a serious threat to public health or safety.', 'My Health Records Act 2012 (Cth)'],
+    hiact: ['Healthcare Identifiers Act 2010', 'Establishes the HI Service and limits the purposes for which an IHI may be collected, used, disclosed or adopted. Unauthorised use by a staff member may be an offence, and the organisation may still be liable for the privacy breach.', 'OAIC'],
+    serious: ['Serious threat', 'A threat posing significant danger to a person\'s physical or mental health or safety, or to another\'s safety. Both the HI Act and s.64 permit use or disclosure to lessen or prevent one.', 'OAIC guidance'],
+    aups: ['AU Patient Summary', 'The Australian localisation of the International Patient Summary, developed through the Sparked FHIR Accelerator. Reached R1 Working Standard in 2026. A FHIR Bundle carrying allergies, medicines, problems and related data — the natural payload for a compressed emergency summary.', 'HL7 Australia / Sparked'],
+    ips: ['International Patient Summary', 'A globally recognised minimal patient summary standard. G7 nations committed to adoption in 2021; the EU, USA, Canada and NZ have programmes underway. A conformant AU PS is also a conformant IPS.', 'HL7'],
+    unverified: ['Unverified IHI', 'An IHI created at a healthcare facility where Services Australia has not been given evidence of identity. Unverified IHIs expire after a period of inactivity; provisional IHIs expire after 90 days.', 'HI Service provider guide'],
+    audit: ['HI Service audit log', 'Every access to a healthcare identifier is recorded. Providers must give the HI Service enough information to identify the authorised user making each request. ADHA separately logs all emergency access use.', 'OAIC / Services Australia'],
+    sbd: ['Sharing by default', 'Under the Health Legislation Amendment (Modernising My Health Record — Sharing by Default) Act 2025, pathology and diagnostic imaging reports must be uploaded to My Health Record by default from 1 July 2026. Medicines information from online prescribers was announced as next.', 'Dept of Health, Disability and Ageing'],
+    restricted: ['Access controls', 'A consumer may set a Record Access Code or restrict individual documents. Outside the circumstances authorised by s.64, a provider may not even check whether restricted documents exist.', 'OAIC'],
+    proda: ['PRODA and NASH', 'PRODA is the Commonwealth digital identity used to reach HPOS and the National Provider Portal. NASH certificates authenticate provider software to the HI Service and My Health Record. Both assume the device can reach the internet.', 'Services Australia'],
+    crdt: ['CRDT', 'Conflict-free replicated data type. A data structure that multiple disconnected replicas can update independently and merge deterministically without coordination — the standard basis for offline-first clinical capture.', 'Distributed systems'],
+    ttl: ['TTL', 'Time to live. An expiry window after which cached data is evicted or, in a cryptographic variant, becomes unreadable because its key has lapsed.', 'Caching'],
+    goldengate: ['Offline replication', 'RFDS runs a replicated copy of its aeromedical EHR so field clinicians can enter and retrieve patient information on a tablet without an internet connection. Live since 2023.', 'Oracle / RFDS, 2023'],
+    apps: ['Australian Privacy Principles', 'The thirteen principles in the Privacy Act 1988 governing collection, use, disclosure and security of personal information. APP 11 requires reasonable steps to protect information from misuse, loss and unauthorised access.', 'Privacy Act 1988 (Cth)'],
+    dcpolicy: ['Security and access policy', 'Before registering to participate in My Health Record, an organisation must have a security and access policy in place. It should be reviewed at least annually and after significant legislative change.', 'ADHA'],
+    catchment: ['Catchment', 'The resident population within an operational radius of a retrieval base. For a base like Charleville or Mount Isa this is tens of thousands of people — small enough that a compressed summary per resident is a modest storage footprint.', 'Author\'s estimate']
+  };
+
+  function gl(k, t) {
+    const g = G[k];
+    if (!g) return t;
+    return '<span class="gl" tabindex="0">' + t + '<span class="tip"><b>' + g[0] + '</b>' + g[1] + '<cite>' + g[2] + '</cite></span></span>';
+  }
+
+  const TAGTXT = { go: 'buildable now', stop: 'policy-blocked', hold: 'conditional', dead: 'not reached' };
+
+  const STRATS = [
+    {
+      id: 'pre', n: 'strategy one', t: 'Geographic pre-positioning', st: 'hold',
+      s: 'Cache summaries for the resident catchment, refreshed on a cycle',
+      body: 'Hold a compressed emergency summary for every resident within the operational radius of a base, refreshed nightly while the aircraft is on the ground and connected. You are not caching the record — you are caching the shape of it. For a base serving a ' + gl('catchment', 'catchment') + ' of tens of thousands, an ' + gl('aups', 'AU PS') + '-shaped summary of a few kilobytes each is a footprint measured in hundreds of megabytes, not terabytes.',
+      pros: ['Zero latency at the point of need — the data is already on the aircraft.', 'Works with no connectivity at all during the mission.', 'Refresh happens at base, where bandwidth and authentication are not constrained.', 'Storage is trivial at catchment scale; this is not a capacity problem.'],
+      cons: ['Misses exactly the population in the MVA scenario — grey nomads, FIFO workers, interstate freight.', 'Cache staleness is invisible to the clinician unless the summary carries its own currency marker.', 'Every refresh is a bulk IHI operation against the ' + gl('hiservice', 'HI Service') + ', each logged.', 'The clinical hit rate is unmeasured, and may be poor for trauma specifically.'],
+      blockers: [
+        ['Consent model mismatch', 'My Health Record access controls are evaluated at access time. Pre-positioning replicates data <em>before</em> any access event, which sits awkwardly with a design built around per-access checks. ' + gl('restricted', 'Restricted documents') + ' would need to be categorically ineligible for caching.'],
+        ['Purpose limitation', 'The ' + gl('hiact', 'HI Act') + ' permits IHI use for providing healthcare to a recipient. Bulk pre-fetch for people who are not yet patients is a different proposition from a lookup at the point of care, and would need an explicit position.'],
+        ['Data at rest on a mobile platform', 'A tablet or aircraft server holding thousands of summaries is a materially different risk surface from one holding a single patient\'s data. ' + gl('apps', 'APP 11') + ' obligations and the organisation\'s ' + gl('dcpolicy', 'security and access policy') + ' both bite harder here.']
+      ],
+      verdict: ['hold', 'Technically straightforward, legally unsettled. The blocker is not storage or bandwidth — it is that pre-fetching health data for people who have not presented is not something the current consent and purpose-limitation model contemplates. Worth a formal position from ADHA before building.']
+    },
+    {
+      id: 'jit', n: 'strategy two', t: 'Just-in-time fetch on tasking', st: 'stop',
+      s: 'Partial identifier resolves base-side, summary pushed to the aircraft',
+      body: 'The tasking event is the trigger. Whatever fragment exists — a name from a bystander, a registration plate, a Medicare card found in a wallet — goes back to base over whatever link holds. Base performs the resolution and pushes a compressed summary down while satcom is still available. Resolution stays in the connected environment where authentication, logging and governance are intact; the aircraft only ever receives an answer.',
+      pros: ['Targets the actual patient rather than a probabilistic cohort.', 'Fuzzy matching and its audit burden stay base-side, under proper governance.', 'No bulk data at rest on the aircraft — only the summary for the current tasking.', 'Highest clinical value of the three, because it works for non-residents.'],
+      cons: ['Depends on a fragment existing at all, which in an MVA is not guaranteed.', 'The connectivity window is narrow and closes as the aircraft approaches the scene.', 'Fails silently if the identifier is wrong — a confident match on the wrong person is worse than no match.', 'Requires a resolution service that does not currently exist.'],
+      blockers: [
+        ['The non-health fragment problem', 'This is the hard one. A registration plate resolves through a state transport registry — a different portfolio, a different privacy regime, a different custodian. Nothing in the ' + gl('hiact', 'HI Act') + ' contemplates deriving an ' + gl('ihi', 'IHI') + ' from a transport identifier, and no published position appears to exist either way.'],
+        ['Lookup requires more than a name', 'The ' + gl('hiservice', 'HI Service') + ' IHI lookup expects name, sex and date of birth <em>plus</em> a further identifier — Medicare number, DVA number, IHI or mobile. A name and approximate age commonly returns no match or a multiple-match error. The constraint here is data quality, not law.'],
+        ['Probabilistic matching has no home', 'The HI Service is built for deterministic lookup. A "who might this be, given these fragments" service is a different capability, and would need a custodian willing to own the false-positive risk.']
+      ],
+      verdict: ['stop', 'The strategy that would actually change outcomes in the MVA scenario, and the one that cannot be built today. The blocker is entirely policy and custodianship — every technical component exists. See the identity chain for where precisely it breaks.']
+    },
+    {
+      id: 'retro', n: 'strategy three', t: 'Retrospective reconciliation', st: 'go',
+      s: 'Capture offline, resolve identity and sync afterwards',
+      body: 'Accept that the first period is clinically blind. Cache nothing prospectively. Build instead for write-back: everything documented at the scene is captured offline as an append-only event log, and identity is resolved and stitched to it once connectivity and information both return — potentially days later, by a health information manager rather than a clinician under pressure.',
+      pros: ['No prospective caching, so no consent or purpose-limitation problem to solve.', 'RFDS already runs ' + gl('goldengate', 'offline replication') + ' for its own EHR — this is operational, not hypothetical.', 'Append-only logs avoid last-write-wins destroying clinical documentation across devices.', 'Improves continuity of care downstream even when it changes nothing at the scene.'],
+      cons: ['Does nothing for the decision window. The clinician at the scene is no better informed.', 'Reconciliation is manual and lags, sometimes badly.', 'Unmatched records accumulate — a backlog with its own governance cost.', 'Risks being mistaken for a solution to the problem it does not address.'],
+      blockers: [
+        ['Identity may never resolve', 'Some records will never match. The system needs an explicit unmatched state rather than a null that looks like an error, and a policy for how long unmatched clinical records are retained.'],
+        ['Write-back to the national record', 'Contributing a retrieval record to My Health Record requires the organisation to hold an ' + gl('hpio', 'HPI-O') + ' with the clinician\'s ' + gl('hpii', 'HPI-I') + ' linked, and a validated IHI for the patient. The identity problem returns at the write step, just later and under less pressure.'],
+        ['Degraded-identity path is untested', 'Creating an ' + gl('unverified', 'unverified IHI') + ' at the scene and reconciling later is permitted in principle for facilities, but whether it fits an aeromedical context has no settled answer.']
+      ],
+      verdict: ['go', 'The least architecturally ambitious option and the most achievable — largely because RFDS has already built most of it. Worth being honest that it improves the record rather than the resuscitation.']
+    }
+  ];
+
+  const SCEN = [
+    { id: 'none', n: 'case 01', t: 'Nothing', s: 'Unconscious, no wallet, no bystander' },
+    { id: 'rego', n: 'case 02', t: 'A rego plate', s: 'Vehicle registration from the scene' },
+    { id: 'name', n: 'case 03', t: 'A name and rough age', s: 'From a bystander or companion' },
+    { id: 'card', n: 'case 04', t: 'A Medicare card', s: 'Found in a wallet at the scene' }
+  ];
+
+  const VERDICT = {
+    none: ['stop', 'no path to a record', 'With no identifier the chain cannot start. ' + gl('s64', 'Section 64') + ' authorises break-glass access, but it does not identify the patient — it only removes the consumer\'s access controls once you already know whose record to open. Care proceeds on presentation alone.'],
+    rego: ['stop', 'blocked outside the health portfolio', 'A plate resolves to a registered operator held in a state transport registry — not a health dataset, and not necessarily the patient. Nothing in the ' + gl('hiact', 'Healthcare Identifiers Act') + ' contemplates deriving an ' + gl('ihi', 'IHI') + ' from a transport identifier. This hop needs a policy instrument, not an API.'],
+    name: ['hold', 'possible, often ambiguous', 'An ' + gl('ihi', 'IHI') + ' lookup takes name, sex and date of birth <em>plus</em> a further identifier such as a Medicare or DVA number. A name and approximate age alone will commonly return no match, or multiple matches. The lookup may still be attempted — the constraint is data quality, not law.'],
+    card: ['go', 'chain completes', 'A Medicare card supplies the identifier the ' + gl('hiservice', 'HI Service') + ' needs. With name, sex, date of birth and card number the lookup should return a verified ' + gl('ihi', 'IHI') + ', and ' + gl('s64', 'section 64') + ' then supports access despite access controls. This is the path that works today — and it depends on a physical card surviving the crash.']
+  };
+
+  const HOPS = [
+    { n: 'hop 01', t: 'Fragment at the scene',
+      s: { none: 'Nothing to work with. Care proceeds on presentation.', rego: 'A plate number. Belongs to the vehicle, not reliably the patient.', name: 'A name and rough age, supplied verbally and unverified.', card: 'Name, date of birth and Medicare number from the card.' },
+      st: { none: 'dead', rego: 'go', name: 'go', card: 'go' },
+      holder: 'The retrieval crew', instrument: 'None — observation, not disclosure',
+      barrier: { none: 'There is no fragment. Every downstream hop is moot.', rego: 'The plate is evidence about a vehicle. Treating it as a patient identifier is an inference, not a fact.', name: 'Verbal identification at a crash scene is frequently wrong — misspellings, nicknames, companions who guess a date of birth.', card: 'Cards are lost, damaged, or belong to a family member. Where one survives it is the strongest fragment available.' } },
+    { n: 'hop 02', t: 'Fragment to a person',
+      s: { none: 'No lookup can be attempted.', rego: 'Requires a state or territory transport registry search.', name: 'The name is the person, but the record match is uncertain.', card: 'The card already names the person.' },
+      st: { none: 'dead', rego: 'stop', name: 'hold', card: 'go' },
+      holder: { none: '—', rego: 'State or territory road transport authority', name: 'The crew', card: 'The crew' },
+      instrument: { none: '—', rego: 'State road transport legislation and privacy law. Not a health instrument.', name: 'None required at this step.', card: 'None required at this step.' },
+      barrier: { none: 'Nothing to resolve.', rego: 'This is the hard hop. Registry access is governed by state transport and privacy regimes with their own purpose limitations, and the registered operator may not be the driver, the driver may not be the patient, and a passenger will not appear at all.', name: 'A name without a corroborating identifier does not uniquely resolve a person in a national dataset.', card: 'The card carries the identifying information directly.' } },
+    { n: 'hop 03', t: 'Person to IHI',
+      s: { none: 'Not reachable.', rego: 'Not reachable — the previous hop did not complete.', name: 'Lookup attempted; may return no match or multiple matches.', card: 'Lookup should return a verified IHI.' },
+      st: { none: 'dead', rego: 'dead', name: 'hold', card: 'go' },
+      holder: 'Services Australia, as HI Service operator', instrument: 'Healthcare Identifiers Act 2010 and HI Regulations 2020',
+      barrier: { none: 'Not reachable.', rego: 'Not reachable.', name: 'The lookup expects demographics <em>plus</em> an identifier — Medicare number, DVA number, IHI or mobile. Name and date of birth alone commonly return an error. Multiple-match errors are a documented failure mode.', card: 'The lookup succeeds where demographics are accurate. Every request is written to the ' + gl('audit', 'HI Service audit log') + ', and the requesting organisation must hold an ' + gl('hpio', 'HPI-O') + ' with the clinician\'s ' + gl('hpii', 'HPI-I') + ' linked to it.' } },
+    { n: 'hop 04', t: 'IHI to the record',
+      s: { none: 'Not reachable.', rego: 'Not reachable.', name: 'Contingent on hop 03 returning a single match.', card: 'Section 64 supports access without consent in a genuine emergency.' },
+      st: { none: 'dead', rego: 'dead', name: 'hold', card: 'go' },
+      holder: 'ADHA, as My Health Record System Operator', instrument: 'My Health Records Act 2012, s.64',
+      barrier: { none: 'Not reachable.', rego: 'Not reachable.', name: 'Same authority applies, but only if the IHI resolved.', card: 'The legal test is met in a serious trauma retrieval: a ' + gl('serious', 'serious threat') + ' to life or health, with consent unobtainable. Break-glass overrides ' + gl('restricted', 'access controls') + ' for up to five days; unauthorised use attracts civil and criminal penalties, and every use is logged and monitored by ADHA.' } },
+    { n: 'hop 05', t: 'Record to the aircraft',
+      s: { none: 'Not reachable.', rego: 'Not reachable.', name: 'Contingent on the chain completing.', card: 'The constraint is now bandwidth, not law.' },
+      st: { none: 'dead', rego: 'dead', name: 'hold', card: 'hold' },
+      holder: 'The retrieval service', instrument: 'Technical, not legislative',
+      barrier: { none: 'Not reachable.', rego: 'Not reachable.', name: 'Contingent on the chain completing.', card: 'Access assumes a live authenticated session — ' + gl('proda', 'PRODA and NASH') + ' both assume connectivity. At the scene there is none. The workable pattern is base-side resolution with a compressed ' + gl('aups', 'AU PS') + ' summary pushed while satcom holds, not an aircraft-side lookup.' } }
+  ];
+
+  const CONSID = [
+    ['Payload design', 'go', '<p>The single most consequential decision, and the one that is now easiest. ' + gl('aups', 'AU Patient Summary') + ' reached R1 Working Standard in 2026, built on ' + gl('ips', 'IPS') + ' and AU Core. A minimal summary — allergies, medicines, problems, advance care directive flags — is a specified FHIR artefact rather than something each service invents.</p><p>At a few kilobytes it moves over a satcom link that would choke on a full document set. Design the payload first: it constrains every other decision, and it is the part with the least ambiguity.</p>'],
+    ['Expiry as cryptography, not deletion', 'go', '<p>For a threat model that includes an aircraft lost or a tablet taken from an unattended vehicle, a cache eviction policy is the wrong mechanism — it has to run to work. Encrypt each cached summary under a key with a short lease. The key expires, the data becomes unreadable, no deletion is required.</p><p>This also gives a cleaner audit story than a ' + gl('ttl', 'TTL') + ' sweep: you can demonstrate the window in which data was capable of being read, rather than asserting that a job ran.</p>'],
+    ['Break-glass when disconnected', 'hold', '<p>' + gl('s64', 'Section 64') + ' authorisation is a judgement the clinician makes, and the system logs. Disconnected, the logging cannot happen in real time — so the access decision is made locally and audited retrospectively.</p><p>That is a shift from permission to accountability. It is defensible in aeromedical retrieval, where the alternative is no access at all, but it should be an explicit design decision with ADHA\'s knowledge, not something that emerges from an implementation detail.</p>'],
+    ['Write-back conflict handling', 'go', '<p>Multiple clinicians, multiple devices, intermittent sync. Mutable records with last-write-wins will silently destroy clinical documentation. Use append-only event logs — each observation an immutable event with timestamp and author — reconciled centrally, or a ' + gl('crdt', 'CRDT') + ' where merge semantics genuinely matter.</p><p>This is well-trodden distributed systems ground and needs no policy change.</p>'],
+    ['Audit burden scales with caching', 'hold', '<p>Every access to a healthcare identifier is written to the ' + gl('audit', 'HI Service audit log') + ', and the provider must supply enough information to identify the authorised user making each request. A nightly bulk refresh for a catchment generates a very different audit profile from per-patient lookups.</p><p>Not a blocker, but it changes the conversation with Services Australia from a technical integration to a volume and purpose discussion.</p>'],
+    ['The record is getting denser', 'go', '<p>Under ' + gl('sbd', 'sharing by default') + ', pathology and diagnostic imaging now flow to My Health Record automatically, with medicines from online prescribers announced as the next category. Consumer views of these reports rose sharply through 2026.</p><p>This cuts both ways: it raises the clinical value of reaching the record, and it raises the cost of a cache that is stale or a chain that does not complete.</p>'],
+    ['Measure before building', 'hold', '<p>The question that should precede all of the above: in what proportion of retrievals would a pre-hospital summary have changed management? Retrieval medicine consensus suggests a minority of cases, concentrated in anticoagulation, anaphylaxis history and advance care directives — a high-consequence minority.</p><p>If that number is small, the case for prospective caching weakens considerably and strategy three plus a fast break-glass path becomes the better investment. This is an empirical question with an answerable form, and it is cheaper than any of the architecture.</p>']
+  ];
+
+  const REFS = [
+    ['01', 'Legislation', 'Healthcare Identifiers Act 2010 (Cth) — permitted collection, use and disclosure of IHIs, including to lessen or prevent a serious threat. <a href="https://www.legislation.gov.au/C2012A00063/latest" target="_blank" rel="noopener">Federal Register of Legislation</a>'],
+    ['02', 'Guidance', 'OAIC, <em>Healthcare identifiers</em> — permitted purposes and provider obligations. <a href="https://www.oaic.gov.au/privacy/privacy-legislation/related-legislation/healthcare-identifiers" target="_blank" rel="noopener">oaic.gov.au</a>'],
+    ['03', 'Legislation', 'My Health Records Act 2012 (Cth), s.64 — collection, use and disclosure in the case of a serious threat. <a href="https://www.legislation.gov.au/C2012A00063/latest" target="_blank" rel="noopener">Federal Register of Legislation</a>'],
+    ['04', 'Guidance', 'OAIC, <em>My Health Record emergency access function</em> — the s.64 test, record-keeping duties and penalties. <a href="https://www.oaic.gov.au/privacy/guidance-and-advice/my-health-record/my-health-record-emergency-access-function" target="_blank" rel="noopener">oaic.gov.au</a>'],
+    ['05', 'Guidance', 'ADHA, <em>Emergency access</em> — five-day access window and lawful-use conditions. <a href="https://myhealthrecord.gov.au/for-healthcare-professionals/howtos/emergency-access" target="_blank" rel="noopener">myhealthrecord.gov.au</a>'],
+    ['06', 'Technical', 'ADHA Implementer Hub, <em>HI Service – IHI Lookup</em> — demographics plus an identifier required for lookup. <a href="https://implementer.digitalhealth.gov.au/resources/hi-service-ihi-lookup" target="_blank" rel="noopener">implementer.digitalhealth.gov.au</a>'],
+    ['07', 'Parliament', 'NSW Legislative Assembly — paramedic access to My Health Record and identification constraints before treatment. <a href="https://www.parliament.nsw.gov.au/la/papers/Pages/qanda-tracking-details.aspx?pk=87503" target="_blank" rel="noopener">parliament.nsw.gov.au</a>'],
+    ['08', 'Standard', 'HL7 Australia / Sparked, <em>AU Patient Summary Implementation Guide</em> v1.0.0 (R1 Working Standard). <a href="https://hl7.org.au/fhir/ps/" target="_blank" rel="noopener">hl7.org.au</a>'],
+    ['09', 'Policy', 'ADHA, <em>Better access to health information</em> — sharing by default from 1 July 2026. <a href="https://www.digitalhealth.gov.au/healthcare-providers/initiatives-and-programs/better-access-to-health-information" target="_blank" rel="noopener">digitalhealth.gov.au</a>'],
+    ['10', 'Industry', 'Oracle / RFDS — aeromedical EHR with offline replication for field use, 2023. <a href="https://www.oracle.com/apac/news/announcement/royal-flying-doctor-service-launches-new-digital-health-record-2023-08-28/" target="_blank" rel="noopener">oracle.com</a>'],
+    ['11', 'Guidance', 'ADHA, <em>Implementing My Health Record in your healthcare organisation</em> — HPI-O registration and security and access policy requirements. <a href="https://www.digitalhealth.gov.au/healthcare-providers/initiatives-and-programs/my-health-record/implementing-my-health-record-in-your-healthcare-organisation" target="_blank" rel="noopener">digitalhealth.gov.au</a>']
+  ];
+
+  const CHART = '<svg width="100%" viewBox="0 0 900 340" role="img" style="display:block;margin:8px 0 12px">' +
+    '<title>Connectivity and identity certainty across a retrieval mission</title>' +
+    '<desc>Two schematic curves. Connectivity starts high at tasking and collapses at the scene before recovering. Identity certainty starts near zero and rises sharply at the scene. The curves cross before the scene; the gap between them is the clinical decision window.</desc>' +
+    '<rect x="430" y="46" width="150" height="196" fill="oklch(38% 0.05 250)" opacity="0.07"/>' +
+    '<line x1="110" y1="46" x2="110" y2="242" stroke="oklch(88% 0.008 250)" stroke-width="1"/>' +
+    '<line x1="110" y1="242" x2="850" y2="242" stroke="oklch(88% 0.008 250)" stroke-width="1"/>' +
+    '<text class="tm" x="98" y="52" text-anchor="end">high</text>' +
+    '<text class="tm" x="98" y="240" text-anchor="end">low</text>' +
+    '<path d="M140 62 C 240 66, 320 84, 390 122 C 430 148, 460 202, 500 222 C 530 236, 570 228, 610 196 C 680 142, 770 100, 830 88" fill="none" stroke="oklch(22% 0.02 250)" stroke-width="1.5" stroke-linecap="round"/>' +
+    '<path d="M140 230 C 260 228, 350 224, 430 216 C 462 212, 478 116, 520 78 C 580 58, 720 52, 830 48" fill="none" stroke="oklch(60% 0.035 250)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="6 5"/>' +
+    '<circle cx="466" cy="200" r="3.5" fill="oklch(38% 0.05 250)"/>' +
+    '<line x1="466" y1="200" x2="466" y2="170" stroke="oklch(78% 0.010 250)" stroke-width="1" stroke-dasharray="3 3"/>' +
+    '<text class="t" x="466" y="162" text-anchor="middle">curves cross</text>' +
+    '<text class="th" x="505" y="34" text-anchor="middle">Clinical decision window</text>' +
+    '<text class="tm" x="140" y="266" text-anchor="middle">tasking</text>' +
+    '<text class="tm" x="255" y="266" text-anchor="middle">departure</text>' +
+    '<text class="tm" x="380" y="266" text-anchor="middle">transit</text>' +
+    '<text class="tm" x="505" y="266" text-anchor="middle">scene</text>' +
+    '<text class="tm" x="650" y="266" text-anchor="middle">retrieval</text>' +
+    '<text class="tm" x="820" y="266" text-anchor="middle">receiving</text>' +
+    '<line x1="120" y1="302" x2="152" y2="302" stroke="oklch(22% 0.02 250)" stroke-width="1.5" stroke-linecap="round"/>' +
+    '<text class="t" x="162" y="306">Connectivity</text>' +
+    '<line x1="298" y1="302" x2="330" y2="302" stroke="oklch(60% 0.035 250)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="6 5"/>' +
+    '<text class="t" x="340" y="306">Identity certainty</text>' +
+    '<text class="tm" x="850" y="306" text-anchor="end">schematic — not measured data</text>' +
+    '</svg>';
+
+  let tab = 'problem', strat = 'jit', scen = 'card';
+  const TABS = [['problem', 'The problem'], ['strategies', 'Three strategies'], ['identity', 'Identity chain'], ['considerations', 'Cross-cutting'], ['sources', 'Sources']];
+
+  function pick(v, id) { return typeof v === 'string' ? v : v[id]; }
+  function label(x) { return '<div class="sec-label"><span class="r"></span><span class="x">' + x + '</span></div>'; }
+
+  function paneProblem() {
+    return label('the inversion') +
+      '<div class="lede">Standard edge caching assumes a knowable cohort. Aeromedical retrieval breaks that assumption in a specific way: connectivity is highest at tasking, when you know least about who you are going to. It collapses at the scene, at the exact moment identity becomes known and the clinical decisions are made.</div>' +
+      CHART +
+      label('three properties do the damage') +
+      '<div class="cols">' +
+      '<div><div class="col-h">Cohort is unknowable</div><div class="body-text">You cannot pre-position what you cannot predict. A motor vehicle accident on a highway involves whoever was on that highway — grey nomads, FIFO workers on rotation, interstate freight. The resident catchment is the wrong population.</div></div>' +
+      '<div><div class="col-h">Connectivity is inverted</div><div class="body-text">Good link at base, degraded in transit, often none at the scene. Every authentication path — ' + gl('proda', 'PRODA and NASH') + ' — assumes the device can reach the internet. At the point of need it cannot.</div></div>' +
+      '<div><div class="col-h">Value decays in minutes</div><div class="body-text">Anticoagulants, anaphylaxis history and advance care directives matter in the first minutes. A full document set does not. The payload that matters is small, which is fortunate, because the link is too.</div></div>' +
+      '</div>' +
+      label('why this is worth solving now') +
+      '<div class="stats">' +
+      '<div><div class="stat-n">1.0.0</div><div class="stat-l">AU Patient Summary, R1 Working Standard</div></div>' +
+      '<div><div class="stat-n">1 Jul 26</div><div class="stat-l">sharing by default commenced</div></div>' +
+      '</div>' +
+      '<div class="body-text">Two things changed in 2026. ' + gl('aups', 'AU Patient Summary') + ' reached R1 Working Standard, so the payload is a specified artefact rather than a bespoke build. And under ' + gl('sbd', 'sharing by default') + ', pathology and diagnostic imaging now flow into My Health Record automatically, making the record materially denser than when emergency access was designed. The value of reaching it has gone up; the difficulty of reaching it has not gone down.</div>';
+  }
+
+  function paneStrategies() {
+    const s = STRATS.find(x => x.id === strat);
+    return label('three ways to respond') +
+      '<div class="lede">Each intervenes at a different point on the timeline, and each fails differently. Select one to see the trade-offs and what stands in the way.</div>' +
+      '<div class="grid3">' +
+      STRATS.map(x => '<button class="strat" data-strat="' + x.id + '" aria-pressed="' + (x.id === strat) + '">' +
+        '<span class="strat-n">' + x.n + '</span><span class="strat-t">' + x.t + '</span>' +
+        '<span class="strat-s">' + x.s + '</span><span class="badge b-' + x.st + '">' + TAGTXT[x.st] + '</span></button>').join('') +
+      '</div>' +
+      '<div class="detail-panel">' +
+      '<div class="dp-h">' + s.t + '</div>' +
+      '<div class="dp-sub">' + s.n + ' &nbsp;/&nbsp; ' + s.s.toLowerCase() + '</div>' +
+      '<div class="dp-body">' + s.body + '</div>' +
+      '<div class="cols">' +
+      '<div><div class="col-h">What it buys you</div>' + s.pros.map(p => '<div class="pt"><span class="pt-m plus">+</span><span>' + p + '</span></div>').join('') + '</div>' +
+      '<div><div class="col-h">What it costs</div>' + s.cons.map(p => '<div class="pt"><span class="pt-m minus">−</span><span>' + p + '</span></div>').join('') + '</div>' +
+      '</div>' +
+      '<div class="col-h">Blockers and considerations</div>' +
+      s.blockers.map(b => '<div class="consid"><div class="consid-top"><span class="consid-h">' + b[0] + '</span></div><div class="body-text">' + b[1] + '</div></div>').join('') +
+      '<div class="verdict is-' + s.verdict[0] + '" style="margin-top:24px"><div class="verdict-h">assessment</div><div class="verdict-b">' + s.verdict[1] + '</div></div>' +
+      '</div>';
+  }
+
+  function paneIdentity() {
+    const v = VERDICT[scen];
+    return label('where strategy two breaks') +
+      '<div class="lede">The just-in-time fetch is blocked, but not by one obstacle — by a chain of five hops, each with a different custodian and a different legal instrument. What the crew arrives with determines how far the chain gets.</div>' +
+      '<div class="scenarios">' +
+      SCEN.map(s => '<button class="scn" data-scn="' + s.id + '" aria-pressed="' + (s.id === scen) + '">' +
+        '<span class="scn-n">' + s.n + '</span><span class="scn-t">' + s.t + '</span><span class="scn-s">' + s.s + '</span></button>').join('') +
+      '</div>' +
+      '<div class="verdict is-' + v[0] + '" style="margin-top:24px"><div class="verdict-h">' + v[1] + '</div><div class="verdict-b">' + v[2] + '</div></div>' +
+      '<div class="chain">' +
+      HOPS.map(h => {
+        const st = h.st[scen];
+        const tt = { go: 'clears', stop: 'blocked', hold: 'conditional', dead: 'not reached' }[st];
+        return '<div class="hop s-' + st + '"><div class="rail"><div class="dot"></div><div class="stem"></div></div>' +
+          '<div class="card" tabindex="0" role="button" aria-expanded="false">' +
+          '<div class="card-top"><span class="hop-n">' + h.n + '</span><span class="hop-t">' + h.t + '</span>' +
+          '<span class="badge b-' + st + '">' + tt + '</span></div>' +
+          '<div class="card-s">' + pick(h.s, scen) + '</div>' +
+          '<div class="expand-hint">open for custodian, instrument and barrier</div>' +
+          '<div class="detail">' +
+          '<div class="drow"><span class="dk">Custodian</span><span class="dv">' + pick(h.holder, scen) + '</span></div>' +
+          '<div class="drow"><span class="dk">Instrument</span><span class="dv">' + pick(h.instrument, scen) + '</span></div>' +
+          '<div class="drow"><span class="dk">Barrier</span><span class="dv">' + pick(h.barrier, scen) + '</span></div>' +
+          '</div></div></div>';
+      }).join('') + '</div>' +
+      label('the thing worth naming') +
+      '<div class="body-text">Every element of this chain works. IHI lookup works. Break-glass works. Offline field capture works. What has no owner is the hop from a non-health fragment to a health identifier — and that hop crosses portfolios, so neither the ' + gl('hiact', 'HI Act') + ' nor state transport law was written with the other in view. NSW Ambulance has put a version of this on the parliamentary record: clinicians may not always be able to identify patients adequately enough to reach a record before treatment begins.</div>';
+  }
+
+  function paneConsiderations() {
+    return label('applies regardless of approach') +
+      '<div class="lede">Seven decisions that have to be made whichever strategy is chosen. Some are settled, some are open, and one should come before any of the others.</div>' +
+      CONSID.map(c => '<div class="consid"><div class="consid-top"><span class="consid-h">' + c[0] + '</span>' +
+        '<span class="badge b-' + c[1] + '">' + (c[1] === 'go' ? 'settled' : 'open') + '</span></div>' +
+        '<div class="body-text">' + c[2] + '</div></div>').join('');
+  }
+
+  function paneSources() {
+    return label('legislation, guidance and reporting') +
+      '<div class="lede">Primary sources for the legal and technical claims made throughout. Current to July 2026.</div>' +
+      '<table class="reftable"><thead><tr><th></th><th>Type</th><th>Source</th></tr></thead><tbody>' +
+      REFS.map(r => '<tr><td class="num">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>').join('') +
+      '</tbody></table>' +
+      '<div class="pullquote">This is an architectural argument, not legal advice. The instruments are cited so they can be checked; the interpretation of how they interact in a retrieval context is the author\'s own. The hop that matters most — a non-health fragment to a health identifier — is precisely where no settled position appears to exist, and an absence of published policy is not the same as a policy of permission. Verify against current legislation and with the relevant custodians before relying on any of it.</div>';
+  }
+
+  function render() {
+    const panes = { problem: paneProblem, strategies: paneStrategies, identity: paneIdentity, considerations: paneConsiderations, sources: paneSources };
+    const app = document.getElementById('app');
+    app.innerHTML = '<div class="wrap">' +
+      '<div class="masthead">' +
+      '<div class="eyebrow"><span class="eyebrow-rule"></span><span class="eyebrow-txt">distributed data architecture / aeromedical retrieval</span></div>' +
+      '<h1>Caching a record for a patient you haven\'t met</h1>' +
+      '<p class="standfirst">Edge data replication assumes you know whose data to place at the edge. Aeromedical retrieval does not offer that. An exploration of three architectural responses, what each costs, and where each one stops.</p>' +
+      '<p class="byline">grounded in Australian legislation current to July 2026 · hover underlined terms for definitions</p></div>' +
+      '<div class="nav" role="tablist">' +
+      TABS.map(t => '<button role="tab" data-tab="' + t[0] + '" aria-selected="' + (t[0] === tab) + '">' + t[1] + '</button>').join('') +
+      '</div><div class="pane">' + panes[tab]() + '</div></div>';
+
+    app.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => { tab = b.dataset.tab; render(); }));
+    app.querySelectorAll('.strat').forEach(b => b.addEventListener('click', () => { strat = b.dataset.strat; render(); }));
+    app.querySelectorAll('.scn').forEach(b => b.addEventListener('click', () => { scen = b.dataset.scn; render(); }));
+    app.querySelectorAll('.card').forEach(c => {
+      const toggle = () => {
+        const open = c.classList.toggle('open');
+        c.setAttribute('aria-expanded', open);
+        c.querySelector('.expand-hint').textContent = open ? 'close' : 'open for custodian, instrument and barrier';
+      };
+      c.addEventListener('click', e => { if (!e.target.closest('.gl') && !e.target.closest('a')) toggle(); });
+      c.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('a')) { e.preventDefault(); toggle(); } });
+    });
+  }
+
+  render();
+})();
+</script>
