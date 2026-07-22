@@ -11,7 +11,7 @@ interface Props {
 
 const {
   title,
-  description = 'Andrew Morrison - Technology Adviser, AI Governance, Digital Policy, University Lecturer.',
+  description = 'intercate.net. Interact, communicate, educate. Writing on artificial intelligence, government, and the craft of building in the public interest. Words by Andrew Morrison.',
   ogImage = '/og-default.png',
   article = false,
   pubDate,
@@ -87,7 +87,7 @@ const currentPath = Astro.url.pathname;
 <body>
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-brand">intercate.net</a>
+      <a href="/" class="nav-brand"><span class="brand-i">inter</span>cate</a>
       <ul class="nav-links">
         <li><a href="/blog" class={currentPath.startsWith('/blog') ? 'active' : ''}>Writing</a></li>
         <li><a href="/projects" class={currentPath.startsWith('/projects') ? 'active' : ''}>Projects</a></li>
@@ -156,7 +156,7 @@ const currentPath = Astro.url.pathname;
         experience. <a href="/disclaimer">Read the full disclaimer</a>.
       </p>
       <div class="footer-meta">
-        <span>© {new Date().getFullYear()} Andrew Morrison</span>
+        <span><span class="brand-i">inter</span>cate.net · words by Andrew Morrison · © {new Date().getFullYear()}</span>
         <div class="footer-links">
           <a href="https://www.linkedin.com/in/andrewnmorrison/" target="_blank" rel="noopener">LinkedIn</a>
           <a href="/rss.xml">RSS</a>
